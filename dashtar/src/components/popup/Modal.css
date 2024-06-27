@@ -1,0 +1,100 @@
+/* Modal.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.815);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.modal {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
+  gap: 10px;
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  /* max-width: 500px; */
+  /* width: 100%; */
+}
+
+.time-container {
+display: flex;
+align-items: start;
+justify-content: center;
+gap: 10px;
+}
+
+.time-picker {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.picker-section {
+align-items: center;
+margin-left: 5px;
+margin-right: 5px;
+}
+
+.seperator{
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.day-container{
+ background: rgb(189, 189, 189);
+ display: flex;
+ align-items: center;
+justify-content: center;
+padding: 5px;
+border: 20px;
+}
+.day-partButton{
+display: flex;
+align-items: center;
+flex-direction: row;
+gap: 3px;
+}
+
+.toggle{
+background-color: rgb(196, 194, 194);
+height: 24px;
+width: 50px;
+border-radius: 30px;
+display: flex;
+cursor: pointer;
+position: relative;
+padding-left: 3px;
+transition: background-color 0.1s ease, border-color 0.2s ease,;
+}
+
+ .thumb {
+height: 20px;
+width: 20px;
+border-radius: 20px;
+background-color:white;
+transform: translateX(0);
+transition: left 0.15s ease;
+position: absolute;
+left: 3x;
+top: 50px;
+transform: translateY(-48px);
+}
+
+.active {
+  left: 0;
+  background-color: #3bb77e;
+}
+
+ .active .thumb {
+  left: calc(50px - 25px);
+}
