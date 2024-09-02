@@ -9,6 +9,7 @@ import { AdminContext } from "@/context/AdminContext";
 import AdminServices from "@/services/AdminServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { removeSetting } from "@/reduxStore/slice/settingSlice";
+import VendorServices from "@/services/VendorServices";
 
 const useLoginSubmit = () => {
   const reduxDispatch = useDispatch();
@@ -22,20 +23,30 @@ const useLoginSubmit = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = ({ name, email, verifyEmail, password, role }) => {
+  const onSubmit = ({
+    auth_id,
+    auth_password,
+    store_id,
+    name,
+    email,
+    verifyEmail,
+    password,
+    role,
+  }) => {
     setLoading(true);
     const cookieTimeOut = 0.5;
     // return;
 
     if (location.pathname === "/login") {
       reduxDispatch(removeSetting("globalSetting"));
-      AdminServices.loginAdmin({ email, password })
+      // AdminServices.loginAdmin({ auth_id, auth_password }) wizicodes
+      VendorServices.login({ store_id, email, password })
         .then((res) => {
           if (res) {
             setLoading(false);
             notifySuccess("Login Success!");
             dispatch({ type: "USER_LOGIN", payload: res });
-            Cookies.set("adminInfo", JSON.stringify(res), {
+            Cookies.set("userInfo", JSON.stringify(res), {
               // expires: cookieTimeOut,
               sameSite: "None",
               secure: true,
@@ -58,7 +69,7 @@ const useLoginSubmit = () => {
             setLoading(false);
             notifySuccess("Register Success!");
             dispatch({ type: "USER_LOGIN", payload: res });
-            Cookies.set("adminInfo", JSON.stringify(res), {
+            Cookies.set("userInfo", JSON.stringify(res), {
               expires: cookieTimeOut,
               sameSite: "None",
               secure: true,
@@ -74,14 +85,16 @@ const useLoginSubmit = () => {
     }
 
     if (location.pathname === "/forgot-password") {
-      AdminServices.forgetPassword({ verifyEmail })
+      VendorServices.forgetPassword({ verifyEmail })
         .then((res) => {
           setLoading(false);
           notifySuccess(res.message);
+          console.log(res);
         })
         .catch((err) => {
           setLoading(false);
           notifyError(err?.response?.data?.message || err?.message);
+          console.log(err);
           // notifyError(err ? err?.response?.data?.message : err?.message);
         });
     }

@@ -16,11 +16,11 @@ import { InfoCircle } from "iconsax-react";
 const EditProfile = () => {
   const { t } = useTranslation();
   const {
-    state: { adminInfo },
+    state: { userInfo },
   } = useContext(AdminContext);
 
   const { register, handleSubmit, onSubmit, errors, imageUrl, setImageUrl } =
-    useStaffSubmit(adminInfo._id);
+    useStaffSubmit(userInfo.staffId);
 
   return (
     <>

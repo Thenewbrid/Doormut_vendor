@@ -216,10 +216,21 @@ const useFilter = (data) => {
       services = services.filter((staff) => staff.role === role);
     }
     //User and Admin filtering
+    // if (searchUser) {
+    //   services = services.filter(
+    //     (search) =>
+    //       search?.name[lang]
+    //         ?.toLowerCase()
+    //         .includes(searchUser.toLowerCase()) ||
+    //       search?.phone?.toLowerCase().includes(searchUser.toLowerCase()) ||
+    //       search?.email?.toLowerCase().includes(searchUser.toLowerCase())
+    //   );
+    // }
+    // wizicodes:.....
     if (searchUser) {
       services = services.filter(
         (search) =>
-          search?.name[lang]
+          search?.name
             ?.toLowerCase()
             .includes(searchUser.toLowerCase()) ||
           search?.phone?.toLowerCase().includes(searchUser.toLowerCase()) ||

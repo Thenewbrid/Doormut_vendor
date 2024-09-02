@@ -34,6 +34,7 @@ import DeleteModal from "@/components/modal/DeleteModal";
 import BulkActionDrawer from "@/components/drawer/BulkActionDrawer";
 import TableLoading from "@/components/preloader/TableLoading";
 import SelectCategory from "@/components/form/selectOption/SelectCategory";
+import { AdminContext } from "@/context/AdminContext";
 
 const Products = () => {
   const { title, allId, serviceId, handleDeleteMany, handleUpdateMany } =
@@ -54,9 +55,14 @@ const Products = () => {
     setSortedField,
     limitData,
   } = useContext(SidebarContext);
+  const { state } = useContext(AdminContext);
+  const { userInfo } = state;
+
+  // wizicodes
 
   const { data, loading, error } = useAsync(() =>
     ProductServices.getAllProducts({
+      store_id: userInfo.store_id,
       page: currentPage,
       limit: limitData,
       category: category,

@@ -13,7 +13,7 @@ import {
   FiBell,
   FiSettings,
 } from "react-icons/fi";
-import { Link,useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 
@@ -29,16 +29,16 @@ import useUtilsFunction from "@/hooks/useUtilsFunction";
 import NotFoundTwo from "@/components/table/NotFoundTwo";
 import NotificationServices from "@/services/NotificationServices";
 
-const Header = ({handleLogout}) => {
+const Header = ({ handleLogout }) => {
   const { toggleSidebar, handleLanguageChange, setNavBar, navBar } =
     useContext(SidebarContext);
   const { state, dispatch } = useContext(AdminContext);
-  const { adminInfo } = state;
+  const { userInfo } = state;
   const { mode, toggleMode } = useContext(WindmillContext);
   const pRef = useRef();
   const nRef = useRef();
   const history = useHistory();
-  
+
   const currentLanguageCode = cookies.get("i18next") || "en";
   const { t } = useTranslation();
   const { updated, setUpdated } = useNotification();
@@ -49,14 +49,14 @@ const Header = ({handleLogout}) => {
   const [totalUnreadDoc, setTotalUnreadDoc] = useState(0);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
- 
+
   // console.log("currentLanguageCode", currentLanguageCode);
 
   const handleLogOut = () => {
     dispatch({ type: "USER_LOGOUT" });
-    Cookies.remove("adminInfo");
+    Cookies.remove("userInfo");
     handleLogout();
-      // history.replace("/login");
+    // history.replace("/login");
     // window.location.replace(`${import.meta.env.VITE_APP_ADMIN_DOMAIN}/login`);
   };
 
@@ -366,14 +366,15 @@ const Header = ({handleLogout}) => {
                 className="rounded-full dark:bg-gray-500 bg-emerald-500 text-white h-8 w-8 font-medium mx-auto focus:outline-none"
                 onClick={handleProfileOpen}
               >
-                {adminInfo.image ? (
+                {userInfo.profileImg ? (
                   <Avatar
                     className="align-middle"
-                    src={`${adminInfo.image}`}
+                    src={`${userInfo.profileImg}`}
                     aria-hidden="true"
                   />
                 ) : (
-                  <span>{adminInfo.email[0].toUpperCase()}</span>
+                  <span>{userInfo.email[0].toUpperCase()}</span>
+                  // <span>{userInfo.email[0].toUpperCase()}</span> wizicodes
                 )}
               </button>
 

@@ -4,13 +4,14 @@ import { AdminContext } from "@/context/AdminContext";
 
 const PrivateRoute = ({ children, ...rest }) => {
   const { state } = useContext(AdminContext);
-  const { adminInfo } = state;
+  const { userInfo } = state;
 
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        adminInfo?.email ? (
+        // wizicodes
+        userInfo?.store_id ? (
           children
         ) : (
           <Redirect

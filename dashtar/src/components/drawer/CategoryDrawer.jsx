@@ -19,7 +19,7 @@ import CategoryServices from "@/services/CategoryServices";
 import DrawerButton from "@/components/form/button/DrawerButton";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 
-const CategoryDrawer = ({ id, data }) => {
+const CategoryDrawer = ({ id, data, isSuper }) => {
   const { t } = useTranslation();
 
   const {
@@ -37,7 +37,7 @@ const CategoryDrawer = ({ id, data }) => {
     setSelectCategoryName,
     handleSelectLanguage,
     isSubmitting,
-  } = useCategorySubmit(id, data);
+  } = useCategorySubmit(id, data, isSuper);
 
   const { showingTranslateValue } = useUtilsFunction();
 
@@ -86,35 +86,37 @@ const CategoryDrawer = ({ id, data }) => {
   };
 
   const handleSelect = async (key) => {
-    // console.log('key', key, 'id', id);
     if (key === undefined) return;
+    const parentCategoryId = await CategoryServices.getCategoryById(key);
+
     if (id) {
-      const parentCategoryId = await CategoryServices.getCategoryById(key);
-
-      if (id === key) {
-        return notifyError("This can't be select as a parent category!");
-      } else if (id === parentCategoryId.parentId) {
-        return notifyError("This can't be select as a parent category!");
-      } else {
-        if (key === undefined) return;
-        setChecked(key);
-
-        const obj = data[0];
-        const result = findObject(obj, key);
-
-        setSelectCategoryName(showingTranslateValue(result?.name));
+      try {
+        if (id === key) {
+          return notifyError("This can't be select as a parent category!");
+        } else if (id === parentCategoryId.parentId) {
+          return notifyError("This can't be select as a parent category!");
+        } else {
+          setChecked(key);
+          let result;
+          for (const obj of data) {
+            result = findObject(obj, key);
+            if (result) break;
+          }
+          setSelectCategoryName(showingTranslateValue(result?.name));
+        }
+      } catch (error) {
+        console.error(error);
       }
     } else {
-      if (key === undefined) return;
       setChecked(key);
-
-      const obj = data[0];
-      const result = findObject(obj, key);
-
+      let result;
+      for (const obj of data) {
+        result = findObject(obj, key);
+        if (result) break;
+      }
       setSelectCategoryName(showingTranslateValue(result?.name));
     }
   };
-
   return (
     <>
       <div className="w-full relative p-6 border-b border-gray-100 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
@@ -166,35 +168,35 @@ const CategoryDrawer = ({ id, data }) => {
                 <Error errorName={errors.description} />
               </div>
             </div>
-
-            <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-              <LabelArea label={t("ParentCategory")} />
-              <div className="col-span-8 sm:col-span-4 relative">
-                <Input
-                  readOnly
-                  {...register(`parent`, {
-                    required: false,
-                  })}
-                  name="parent"
-                  value={selectCategoryName ? selectCategoryName : "Home"}
-                  placeholder={t("ParentCategory")}
-                  type="text"
-                />
-
-                <div className="draggable-demo capitalize">
-                  <style dangerouslySetInnerHTML={{ __html: STYLE }} />
-                  <Tree
-                    expandAction="click"
-                    treeData={renderCategories(data)}
-                    selectedKeys={[checked]}
-                    onSelect={(v) => handleSelect(v[0])}
-                    motion={motion}
-                    animation="slide-up"
+            {!isSuper && (
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label={t("ParentCategory")} />
+                <div className="col-span-8 sm:col-span-4 relative">
+                  <Input
+                    readOnly
+                    {...register(`parent`, {
+                      required: false,
+                    })}
+                    name="parent"
+                    value={selectCategoryName ? selectCategoryName : "Htestome"}
+                    placeholder={t("ParentCategory")}
+                    type="text"
                   />
+
+                  <div className="draggable-demo capitalize">
+                    <style dangerouslySetInnerHTML={{ __html: STYLE }} />
+                    <Tree
+                      expandAction="click"
+                      treeData={renderCategories(data)}
+                      selectedKeys={[checked]}
+                      onSelect={(v) => handleSelect(v[0])}
+                      motion={motion}
+                      animation="slide-up"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-
+            )}
             <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
               <LabelArea label={t("CategoryIcon")} />
               <div className="col-span-8 sm:col-span-4">

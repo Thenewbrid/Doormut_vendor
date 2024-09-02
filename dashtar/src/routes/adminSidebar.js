@@ -24,26 +24,26 @@ const admin = [
         path: "/products",
         name: "Products",
       },
-      {
-        path: "/categories",
-        name: "Categories",
-      },
-      {
-        path: "/attributes",
-        name: "Attributes",
-      },
-      {
-        path: "/coupons",
-        name: "Coupons",
-      },
+      // {
+      //   path: "/categories",
+      //   name: "Categories",
+      // },
+      // {
+      //   path: "/attributes",
+      //   name: "Attributes",
+      // },
+      // {
+      //   path: "/coupons",
+      //   name: "Coupons",
+      // },
     ],
   },
 
-  {
-    path: "/customers",
-    icon: FiUsers,
-    name: "Customers",
-  },
+  // {
+  //   path: "/customers",
+  //   icon: FiUsers,
+  //   name: "Customers",
+  // },
   {
     path: "/orders",
     icon: FiCompass,

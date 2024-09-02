@@ -51,13 +51,27 @@ const Login = () => {
                   Login
                 </h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
+                  <LabelArea label="Store Id" />
+                  <InputArea
+                    register={register}
+                    defaultValue=""
+                    label="Store Id"
+                    name="store_id"
+                    // name wizicodes
+                    type="text"
+                    autoComplete="username"
+                    placeholder="VENLOC_123"
+                  />
+                  <Error errorName={errors.store_id} />
+                  <div className="mt-6"></div>
                   <LabelArea label="Email" />
                   <InputArea
                     register={register}
-                    defaultValue="admin@gmail.com"
+                    defaultValue=""
                     label="Email"
                     name="email"
-                    type="email"
+                    // name wizicdes
+                    type="text"
                     autoComplete="username"
                     placeholder="john@doe.com"
                   />
@@ -69,12 +83,13 @@ const Login = () => {
                     defaultValue="12345678"
                     label="Password"
                     name="password"
+                    // pasword wizicodes
                     type="password"
                     autocomplete="current-password"
                     placeholder="***************"
                   />
                   <Error errorName={errors.password} />
-
+                  {/* // pasword wizicodes */}
                   {loading ? (
                     <CMButton
                       disabled={loading}
@@ -118,14 +133,15 @@ const Login = () => {
                     {t("ForgotPassword")}
                   </Link>
                 </p>
-                <p className="mt-1">
-                  <Link
-                    className="text-sm font-medium text-emerald-500 dark:text-emerald-400 hover:underline"
-                    to="/signup"
-                  >
-                    {t("CreateAccountTitle")}
-                  </Link>
-                </p>
+                {/* wizicodes
+                // <p className="mt-1">
+                //   <Link
+                //     className="text-sm font-medium text-emerald-500 dark:text-emerald-400 hover:underline"
+                //     to="/signup"
+                //   >
+                //     {t("CreateAccountTitle")}
+                //   </Link>
+                // </p> */}
               </div>
             </main>
           </div>

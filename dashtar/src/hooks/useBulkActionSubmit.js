@@ -12,7 +12,7 @@ import LanguageServices from "@/services/LanguageServices";
 import ProductServices from "@/services/ProductServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
-const useBulkActionSubmit = (ids, lang = "en", childId) => {
+const useBulkActionSubmit = (ids, lang = "en", childId, index, isSuper) => {
   const [children, setChildren] = useState("");
   const [tag, setTag] = useState([]);
   const location = useLocation();
@@ -72,8 +72,10 @@ const useBulkActionSubmit = (ids, lang = "en", childId) => {
       // category data
       const categoryData = {
         ids: ids,
-        parentId: checked,
-        description: data.description,
+        parentId: isSuper ? undefined : checked,
+        description: {
+          [lang]: data.description || "",
+        },
         parentName: selectCategoryName,
         status: published ? "show" : "hide",
       };
@@ -131,7 +133,7 @@ const useBulkActionSubmit = (ids, lang = "en", childId) => {
 
       if (
         location.pathname === "/categories" ||
-        location.pathname === `/categories/${childId}`
+        location.pathname === `/categories/${childId}/${index}`
       ) {
         const res = await CategoryServices.updateManyCategory(categoryData);
         setIsUpdate(true);

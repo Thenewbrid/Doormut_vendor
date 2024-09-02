@@ -7,7 +7,7 @@ import CategoryServices from "@/services/CategoryServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
 // import useTranslationValue from "./useTranslationValue";
 
-const useCategorySubmit = (id, data) => {
+const useCategorySubmit = (id, data, isSuper) => {
   const { isDrawerOpen, closeDrawer, setIsUpdate, lang } =
     useContext(SidebarContext);
   const [resData, setResData] = useState({});
@@ -55,10 +55,10 @@ const useCategorySubmit = (id, data) => {
 
           // ...descriptionTranslates,
         },
-        parentId: checked ? checked : undefined,
-        parentName: selectCategoryName ? selectCategoryName : "Home",
+        parentId: isSuper ? undefined : checked ? checked : undefined,
+        parentName: isSuper ? name : selectCategoryName && selectCategoryName,
         // parentName: selectCategoryName ? selectCategoryName : 'Home',
-
+        id: isSuper && "Root",
         icon: imageUrl,
         status: published ? "show" : "hide",
         lang: language,
@@ -111,7 +111,7 @@ const useCategorySubmit = (id, data) => {
       clearErrors("parentId");
       clearErrors("parentName");
       clearErrors("description");
-      setSelectCategoryName("Home");
+      setSelectCategoryName(data[0]?.name?.[lang]);
       setLanguage(lang);
       setValue("language", language);
 

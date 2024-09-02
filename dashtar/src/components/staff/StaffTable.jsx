@@ -44,7 +44,7 @@ const StaffTable = ({ staffs, lang }) => {
                 />
                 <div>
                   <h2 className="text-sm font-medium">
-                    {showingTranslateValue(staff?.name)}
+                    {staff?.name}
                   </h2>
                 </div>
               </div>
@@ -60,7 +60,7 @@ const StaffTable = ({ staffs, lang }) => {
             <TableCell>
               <span className="text-sm">
                 {/* {dayjs(staff.joiningData).format("DD/MM/YYYY")} */}
-                {showDateFormat(staff.joiningData)}
+                {showDateFormat(staff.createdAt)}
               </span>
             </TableCell>
             <TableCell>
@@ -70,14 +70,14 @@ const StaffTable = ({ staffs, lang }) => {
               <Status status={staff.status} />
             </TableCell>
 
-            <TableCell className="text-center">
+            {/* <TableCell className="text-center">
               <ActiveInActiveButton
                 id={staff?._id}
                 staff={staff}
                 option="staff"
                 status={staff.status}
               />
-            </TableCell>
+            </TableCell> */}
 
             <TableCell>
               <EditDeleteButton
@@ -87,7 +87,7 @@ const StaffTable = ({ staffs, lang }) => {
                 handleUpdate={handleUpdate}
                 handleModalOpen={handleModalOpen}
                 handleResetPassword={handleResetPassword}
-                title={showingTranslateValue(staff?.name)}
+                title={staff?.name}
               />
             </TableCell>
           </TableRow>

@@ -31,6 +31,7 @@ import useUtilsFunction from "@/hooks/useUtilsFunction";
 
 const ChildCategory = () => {
   const { id } = useParams();
+  const { index } = useParams();
   const [childCategory, setChildCategory] = useState([]);
   const [selectedObj, setSelectObj] = useState([]);
   const [isCheckAll, setIsCheckAll] = useState(false);
@@ -41,7 +42,7 @@ const ChildCategory = () => {
   const { data, loading, error } = useAsync(CategoryServices.getAllCategory);
 
   const { showingTranslateValue } = useUtilsFunction();
-
+  const [selected, setSelected] = useState(index);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -73,16 +74,20 @@ const ChildCategory = () => {
     };
 
     if (!loading) {
-      const result = findChildArray(data[0], id);
-      const res = getAncestors(id, data[0]?.children);
+      const result = findChildArray(data[selected], id);
+      const res = getAncestors(id, data[selected]?.children);
 
       if (result?.children?.length > 0) {
+        setSelected(selected);
         setChildCategory(result?.children);
         setSelectObj(res);
       }
       // console.log("result", result, "res", res);
+      console.log(data[selected]?.name.en);
     }
   }, [id, loading, data, childCategory]);
+
+  console.log({ childCategory, isCheck });
 
   const {
     totalResults,
@@ -107,11 +112,13 @@ const ChildCategory = () => {
       <DeleteModal ids={allId} setIsCheck={setIsCheck} category />
 
       <BulkActionDrawer
+        setIsCheck={setIsCheck}
         ids={allId}
         title="Child Categories"
         lang={lang}
         data={data}
         childId={id}
+        index={index}
       />
 
       <div className="flex items-center pb-4">
@@ -119,6 +126,14 @@ const ChildCategory = () => {
           <li className="text-sm pr-1 transition duration-200 ease-in cursor-pointer hover:text-emerald-500 font-semibold">
             <Link to={`/categories`}>{t("Categories")}</Link>
           </li>
+          <FiChevronRight />{" "}
+          {data[selected]?.name && (
+            <li className="text-sm pr-1 transition duration-200 ease-in cursor-pointer hover:text-emerald-500 font-semibold">
+              <Link to={`/categories/${data[selected]?._id}/${selected}`}>
+                {data[selected]?.name.en}
+              </Link>
+            </li>
+          )}
           {selectedObj?.map((child, i) => (
             <span key={i + 1} className="flex items-center font-serif">
               <li className="text-sm mt-[1px]">
@@ -126,7 +141,7 @@ const ChildCategory = () => {
                 <FiChevronRight />{" "}
               </li>
               <li className="text-sm pl-1 transition duration-200 ease-in cursor-pointer text-blue-700 hover:text-emerald-500 font-semibold ">
-                <Link to={`/categories/${child._id}`}>
+                <Link to={`/categories/${child._id}/${index}`}>
                   {showingTranslateValue(child?.name)}
                 </Link>
               </li>
@@ -209,6 +224,7 @@ const ChildCategory = () => {
               isCheck={isCheck}
               setIsCheck={setIsCheck}
               useParamId={id}
+              indexed={index}
             />
           </Table>
           <TableFooter>

@@ -29,6 +29,8 @@ import OrderTable from "@/components/order/OrderTable";
 import TableLoading from "@/components/preloader/TableLoading";
 import spinnerLoadingImage from "@/assets/img/spinner.gif";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
+import VendorServices from "@/services/VendorServices";
+import { AdminContext } from "@/context/AdminContext";
 
 const Orders = () => {
   const {
@@ -54,53 +56,59 @@ const Orders = () => {
   const { t } = useTranslation();
 
   const [loadingExport, setLoadingExport] = useState(false);
-
+  const { state, dispatch } = useContext(AdminContext);
+  const { userInfo } = state;
   const { data, loading, error } = useAsync(() =>
-    OrderServices.getAllOrders({
-      day: time,
-      method: method,
-      status: status,
-      page: currentPage,
-      endDate: endDate,
-      startDate: startDate,
-      limit: resultsPerPage,
-      customerName: searchText,
+    VendorServices.getfilteredOrders({
+      storeid: userInfo.store_id,
+      searchName: searchText || "",
+      status: status || "",
+      startDate: startDate || "",
+      endDate: endDate || "",
+      method: method || "",
+      day: time || "",
+      page: 1 || "",
+      limit: resultsPerPage || "",
     })
   );
 
+  console.log({startDate, endDate});
+
   const { currency, getNumber, getNumberTwo } = useUtilsFunction();
 
-  const { dataTable, serviceData } = useFilter(data?.orders);
+  const { dataTable, serviceData } = useFilter(
+    data?.filteredVendorOrders || data?.vendorOrders
+  );
 
   const handleDownloadOrders = async () => {
     try {
       setLoadingExport(true);
-      const res = await OrderServices.getAllOrders({
-        page: 1,
-        day: time,
-        method: method,
-        status: status,
-        endDate: endDate,
-        download: true,
-        startDate: startDate,
-        limit: data?.totalDoc,
-        customerName: searchText,
+      const res = await VendorServices.getfilteredOrders({
+        storeid: userInfo.store_id,
+        searchName: searchText || "",
+        status: status || "",
+        startDate: startDate || "",
+        endDate: endDate || "",
+        method: method || "",
+        day: time || "",
+        page: 1 || "",
+        limit: resultsPerPage || "",
       });
 
       // console.log("handleDownloadOrders", res);
-      const exportData = res?.orders?.map((order) => {
+      const exportData = res?.filteredVendorOrders?.map((order) => {
         return {
           _id: order._id,
           invoice: order.invoice,
-          subTotal: getNumberTwo(order.subTotal),
-          shippingCost: getNumberTwo(order.shippingCost),
-          discount: getNumberTwo(order?.discount),
-          total: getNumberTwo(order.total),
+          totalAmount: getNumberTwo(order.totalAmount),
+          // shippingCost: getNumberTwo(order.shippingCost),
+          // discount: getNumberTwo(order?.discount),
+          // total: getNumberTwo(order.total),
           paymentMethod: order.paymentMethod,
           status: order.status,
-          user_info: order?.user_info?.name,
-          createdAt: order.createdAt,
-          updatedAt: order.updatedAt,
+          user_info: order?.userId?.name,
+          createdAt: order.orderTime,
+          // updatedAt: order.updatedAt,
         };
       });
       // console.log("exportData", exportData);
@@ -291,18 +299,18 @@ const Orders = () => {
                 <TableCell>{t("CustomerName")}</TableCell>
                 <TableCell>{t("MethodTbl")}</TableCell>
                 <TableCell>{t("AmountTbl")}</TableCell>
-                <TableCell>{t("OderStatusTbl")}</TableCell>
+                {/* <TableCell>{t("OderStatusTbl")}</TableCell> */}
                 <TableCell>{t("ActionTbl")}</TableCell>
                 <TableCell className="text-right">{t("InvoiceTbl")}</TableCell>
               </tr>
             </TableHeader>
 
-            <OrderTable orders={dataTable} />
+            <OrderTable orders={dataTable} vendorId={userInfo.store_id} />
           </Table>
 
           <TableFooter>
             <Pagination
-              totalResults={data?.totalDoc}
+              totalResults={data?.filteredVendorOrders?.length}
               resultsPerPage={resultsPerPage}
               onChange={handleChangePage}
               label="Table navigation"

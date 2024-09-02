@@ -12,11 +12,15 @@ import ProductServices from "@/services/ProductServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
 // import useTranslationValue from "./useTranslationValue";
 import useUtilsFunction from "./useUtilsFunction";
+import { AdminContext } from "@/context/AdminContext";
 
 const useProductSubmit = (id) => {
   const location = useLocation();
   const { isDrawerOpen, closeDrawer, setIsUpdate, lang } =
     useContext(SidebarContext);
+
+  const { state } = useContext(AdminContext);
+  const { userInfo } = state;
 
   const { data: attribue } = useAsync(AttributeServices.getShowingAttributes);
 
@@ -142,7 +146,7 @@ const useProductSubmit = (id) => {
         slug: data.slug
           ? data.slug
           : data.title.toLowerCase().replace(/[^A-Z0-9]+/gi, "-"),
-
+        store_id: userInfo.store_id,
         categories: selectedCategory.map((item) => item._id),
         category: defaultCategory[0]._id,
 

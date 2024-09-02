@@ -27,8 +27,9 @@ import useUtilsFunction from "@/hooks/useUtilsFunction";
 import InvoiceForDownload from "@/components/invoice/InvoiceForDownload";
 import SelectStatus from "@/components/form/selectOption/SelectStatus";
 import useFilter from "@/hooks/useFilter";
+import VendorServices from "@/services/VendorServices";
 
-const OrderInvoice = ({orders}) => {
+const OrderInvoice = ({ orders }) => {
   const { t } = useTranslation();
   const { mode } = useContext(WindmillContext);
   const { id } = useParams();
@@ -37,9 +38,10 @@ const OrderInvoice = ({orders}) => {
   //  const { dataTable } = useFilter(dashboardRecentOrder?.orders);
 
   const { data, loading, error } = useAsync(() =>
-    OrderServices.getOrderById(id)
+    VendorServices.getVendorOrders("MTMT_150", id)
   );
 
+  console.log(data[0]?.invoice);
   const {
     currency,
     globalSetting,
@@ -78,7 +80,7 @@ const OrderInvoice = ({orders}) => {
                     {t("InvoiceNo")}
                   </span>
                   <span className="text-sm text-gray-500 dark:text-gray-400 block">
-                    #{data?.invoice}
+                    #{data[0]?.invoice}
                   </span>
                 </div>
                 {/* SATATUS */}
@@ -86,7 +88,7 @@ const OrderInvoice = ({orders}) => {
                   {t("InvoiceStatus")}
                   <span className="pl-2 font-medium text-xs capitalize">
                     {" "}
-                    <Status status={data.status} />
+                    <Status status={data[0].status} />
                   </span>
                 </p>
               </div>
@@ -131,21 +133,21 @@ const OrderInvoice = ({orders}) => {
                 </span>
                 <span className="text-sm text-gray-500 text-left dark:text-gray-400 block">
                   <span className="font-extrabold"> Name: </span>{" "}
-                  {data?.user_info?.name} <br />
+                  {data[0]?.userId?.name} <br />
                   <span className="font-extrabold"> Eamil: </span>{" "}
-                  {data?.user_info?.email} <br />
+                  {data[0]?.userId?.email} <br />
                   <span className="font-extrabold"> Number: </span>{" "}
-                  <span className="ml-2">{data?.user_info?.contact}</span>
+                  <span className="ml-2">{data[0]?.userId?.contact}</span>
                   <br />
                   <span className="font-extrabold"> Country: </span>{" "}
-                  {data?.user_info?.address?.substring(0, 30)}
+                  {data[0]?.userId?.address?.substring(0, 30)}
                   <br />
                   <span className="font-extrabold">
                     {" "}
                     City/Country/ZipCode:{" "}
                   </span>{" "}
-                  {data?.user_info?.city}, {data?.user_info?.country},{" "}
-                  {data?.user_info?.zipCode}
+                  {data[0]?.userId?.city}, {data[0]?.userId?.country},{" "}
+                  {data[0]?.userId?.zipCode}
                 </span>
               </div>
               {/* END OF CUSTOMER DETAILS */}
@@ -218,34 +220,34 @@ const OrderInvoice = ({orders}) => {
                   {t("InvoicepaymentMethod")}
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold font-serif block">
-                  {data.paymentMethod}
+                  {data[0].paymentMethod}
                 </span>
               </div>
-              <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
+              {/* <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
                 <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 dark:text-gray-500 block">
                   {t("ShippingCost")}
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold font-serif block">
                   {currency}
-                  {getNumberTwo(data.shippingCost)}
+                  {getNumberTwo(data[0]?.shippingCost / data[0]?.cartNo)}
                 </span>
-              </div>
-              <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
+              </div> */}
+              {/* <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
                 <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 dark:text-gray-500 block">
                   {t("InvoiceDicount")}
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold font-serif block">
                   {currency}
-                  {getNumberTwo(data.discount)}
+                  {getNumberTwo(data[0].discount)}
                 </span>
-              </div>
+              </div> */}
               <div className="flex flex-col sm:flex-wrap">
                 <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 dark:text-gray-500 block">
                   {t("InvoiceTotalAmount")}
                 </span>
                 <span className="text-xl font-serif font-bold text-red-500 dark:text-emerald-500 block">
                   {currency}
-                  {getNumberTwo(data.total)}
+                  {getNumberTwo(data[0]?.totalAmount)}
                 </span>
               </div>
             </div>

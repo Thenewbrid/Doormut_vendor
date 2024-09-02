@@ -28,14 +28,29 @@ import PageTitle from "@/components/Typography/PageTitle";
 import { AdminContext } from "@/context/AdminContext";
 import { SidebarContext } from "@/context/SidebarContext";
 import AdminServices from "@/services/AdminServices";
+import VendorServices from "@/services/VendorServices";
 
 const Staff = () => {
   const { state } = useContext(AdminContext);
-  const { adminInfo } = state;
-  const { toggleDrawer, lang } = useContext(SidebarContext);
+  const { userInfo } = state;
+  const { toggleDrawer, lang, setIsUpdate } = useContext(SidebarContext);
 
+  // const { data, loading, error } = useAsync(() =>
+  //   AdminServices.getAllStaff({ email: userInfo.email })
+  // );
+
+  const { t } = useTranslation();
+
+  // handle reset filed
+  const handleResetField = () => {
+    setRole(null);
+    userRef.current.value = null;
+    setIsUpdate(true)
+  };
+
+  // wizicodes----start-----------
   const { data, loading, error } = useAsync(() =>
-    AdminServices.getAllStaff({ email: adminInfo.email })
+    VendorServices.getAllStaffs({ id: userInfo._id })
   );
 
   const {
@@ -48,14 +63,9 @@ const Staff = () => {
     handleChangePage,
     handleSubmitUser,
   } = useFilter(data);
+  console.log(userRef);
 
-  const { t } = useTranslation();
-
-  // handle reset filed
-  const handleResetField = () => {
-    setRole("");
-    userRef.current.value = "";
-  };
+  // end---------------
 
   return (
     <>
@@ -88,8 +98,12 @@ const Staff = () => {
                   {t("StaffRole")}
                 </option>
                 <option value="Admin">{t("StaffRoleAdmin")}</option>
-                <option value="Cashier">{t("SelectCashiers")}</option>
-                <option value="Super Admin">{t("SelectSuperAdmin")}</option>
+                <option value="Manager">Manager</option>
+                <option value="Cashier">Cashier</option>
+                {/* <option value="Manger">{t("SelectCashiers")}</option> */}
+                {/* <option value="Cashier">{t("SelectCashiers")}</option>
+                <option value="Cashier">{t("SelectCashiers")}</option> */}
+                {/* <option value="Super Admin">{t("SelectSuperAdmin")}</option> */}
               </Select>
             </div>
 
@@ -141,9 +155,9 @@ const Staff = () => {
                 <TableCell className="text-center">
                   {t("OderStatusTbl")}
                 </TableCell>
-                <TableCell className="text-center">
+                {/* <TableCell className="text-center">
                   {t("PublishedTbl")}
-                </TableCell>
+                </TableCell> */}
 
                 <TableCell className="text-right">
                   {t("StaffActionsTbl")}

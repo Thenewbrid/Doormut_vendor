@@ -60,7 +60,7 @@ const Category = () => {
     handleSelectFile,
     handleUploadMultiple,
     handleRemoveSelectFile,
-  } = useFilter(data[0]?.children ? data[0]?.children : data);
+  } = useFilter(data?.children ? data?.children : data);
 
   // react hooks
   const [isCheckAll, setIsCheckAll] = useState(false);
@@ -69,12 +69,19 @@ const Category = () => {
 
   const handleSelectAll = () => {
     setIsCheckAll(!isCheckAll);
-    setIsCheck(data[0]?.children.map((li) => li._id));
+    // setIsCheck(data[0]?.children.map((li) => li._id));
+    const toBe = data.map((items) => {
+      return items;
+    });
+    setIsCheck(toBe?.map((li) => li._id));
     if (isCheckAll) {
       setIsCheck([]);
     }
   };
 
+  // console.log(data.map((items) => {
+  //   return items.children
+  // }));
   // handle reset field function
   const handleResetField = () => {
     setCategoryType("");
@@ -89,6 +96,7 @@ const Category = () => {
       <DeleteModal ids={allId} setIsCheck={setIsCheck} />
 
       <BulkActionDrawer
+        isSuper={true}
         ids={allId}
         title="Categories"
         lang={lang}
@@ -97,7 +105,7 @@ const Category = () => {
       />
 
       <MainDrawer>
-        <CategoryDrawer id={serviceId} data={data} lang={lang} />
+        <CategoryDrawer setIsCheck={setIsCheck} id={serviceId} data={data} lang={lang} />
       </MainDrawer>
 
       <Card className="min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5">
@@ -238,6 +246,7 @@ const Category = () => {
             </TableHeader>
 
             <CategoryTable
+              isSuper={true}
               data={data}
               lang={lang}
               isCheck={isCheck}

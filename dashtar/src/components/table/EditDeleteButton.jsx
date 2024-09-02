@@ -11,6 +11,7 @@ const EditDeleteButton = ({
   handleUpdate,
   handleModalOpen,
   isCheck,
+  index,
   product,
   parent,
   children,
@@ -23,7 +24,7 @@ const EditDeleteButton = ({
         {children?.length > 0 ? (
           <>
             <Link
-              to={`/categories/${parent?._id}`}
+              to={`/categories/${parent?._id}/${index}`}
               className="p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none"
             >
               <Tooltip
@@ -51,7 +52,7 @@ const EditDeleteButton = ({
           <button
             disabled={isCheck?.length > 0}
             onClick={() => handleUpdate(id)}
-            className="p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none"
+            className="p-2 cursor-pointer text-gray-400 hover:text-emerald-500 focus:outline-none"
           >
             <Tooltip
               id="edit"

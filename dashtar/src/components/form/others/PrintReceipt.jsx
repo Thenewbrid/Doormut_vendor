@@ -10,8 +10,9 @@ import { notifyError } from "../../../utils/toast";
 import OrderServices from "../../../services/OrderServices";
 import SettingServices from "../../../services/SettingServices";
 import InvoiceForPrint from "../../invoice/InvoiceForPrint";
+import VendorServices from "../../../services/VendorServices";
 
-const PrintReceipt = ({ orderId }) => {
+const PrintReceipt = ({ orderId, isVendor }) => {
   const printRefTwo = useRef();
   const [orderData, setOrderData] = useState({});
 
@@ -58,9 +59,16 @@ const PrintReceipt = ({ orderId }) => {
 
   const handlePrintReceipt = async (id) => {
     try {
-      const res = await OrderServices.getOrderById(id);
-      setOrderData(res);
-      handlePrint();
+      if (isVendor === true) {
+        const res = await VendorServices.getVendorOrders("MTMT_150", id);
+        setOrderData(res);
+        handlePrint();
+        console.log(res);
+      } else {
+        const res = await OrderServices.getOrderById(id);
+        setOrderData(res);
+        handlePrint();
+      }
     } catch (err) {
       // console.log("order by user id error", err);
       notifyError(err ? err?.response?.data?.message : err?.message);
@@ -73,6 +81,7 @@ const PrintReceipt = ({ orderId }) => {
       <div style={{ display: "none" }}>
         {Object.keys(orderData).length > 0 && (
           <InvoiceForPrint
+            isVendor={isVendor}
             data={orderData}
             printRef={printRefTwo}
             globalSetting={globalSetting}

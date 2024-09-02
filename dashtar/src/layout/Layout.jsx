@@ -22,21 +22,21 @@ const Layout = () => {
   let location = useLocation();
 
   const { state } = useContext(AdminContext);
-  const { adminInfo } = state;
+  const { userInfo } = state;
 
   const [roleId, setRoleId] = useState("");
 
   useEffect(() => {
-    if (adminInfo?.role === "Admin") {
+    if (userInfo?.role === "Admin") {
       setRoleId("666b030efaad2fc5994461a5");
-    } else if (adminInfo?.role === "Manager") {
+    } else if (userInfo?.role === "Manager") {
       setRoleId("666b07a9faad2fc599446283");
-    } else if (adminInfo?.role === "Cashier") {
+    } else if (userInfo?.role === "Cashier") {
       setRoleId("666b07cefaad2fc59944628a");
     } else {
       setRoleId("");
     }
-  }, [adminInfo.role, roleId]);
+  }, [userInfo.role, roleId]);
 
   const isOnline = navigator.onLine;
 
@@ -135,8 +135,9 @@ const Layout = () => {
           You are in offline mode!{" "}
         </div>
       )}
+      {/* // wizicodes */}
       <div
-        className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${
+        className={`flex h-screen bg-gray-100 dark:bg-gray-900 ${
           isSidebarOpen && "overflow-hidden"
         }`}
       >

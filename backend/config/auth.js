@@ -11,12 +11,39 @@ const signInToken = (user) => {
       address: user.address,
       phone: user.phone,
       image: user.image,
-      role:user.role,
+      role: user.role,
     },
     process.env.JWT_SECRET,
     {
       expiresIn: "2d",
     }
+  );
+};
+
+const vendorSignInToken = (vendor) => {
+  return jwt.sign(
+    {
+      _id: vendor._id,
+      auth_id: vendor.auth_id,
+      auth_password: vendor.auth_password,
+    },
+    process.env.JWT_SECRET_FOR_VERIFY,
+    { expiresIn: "2d" }
+  );
+};
+
+const vendorToken = (staff, vendor) => {
+  return jwt.sign(
+    {
+      _id: staff._id,
+      store_id: vendor.store_id,
+      name: staff.name,
+      email: staff.email,
+      password: staff.password,
+      role: staff.role,
+    },
+    process.env.JWT_SECRET_FOR_VERIFY,
+    { expiresIn: "15m" }
   );
 };
 
@@ -62,6 +89,8 @@ const isAdmin = async (req, res, next) => {
 
 module.exports = {
   signInToken,
+  vendorToken,
+  vendorSignInToken,
   tokenForVerify,
   isAuth,
   isAdmin,

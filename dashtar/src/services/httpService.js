@@ -13,9 +13,9 @@ const instance = axios.create({
 // Add a request interceptor
 instance.interceptors.request.use(function (config) {
   // Do something before request is sent
-  let adminInfo;
-  if (Cookies.get("adminInfo")) {
-    adminInfo = JSON.parse(Cookies.get("adminInfo"));
+  let userInfo;
+  if (Cookies.get("userInfo")) {
+    userInfo = JSON.parse(Cookies.get("userInfo"));
   }
 
   let company;
@@ -30,7 +30,7 @@ instance.interceptors.request.use(function (config) {
   return {
     ...config,
     headers: {
-      authorization: adminInfo ? `Bearer ${adminInfo.token}` : null,
+      authorization: userInfo ? `Bearer ${userInfo.token}` : null,
       company: company ? company : null,
     },
   };

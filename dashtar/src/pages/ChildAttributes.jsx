@@ -88,6 +88,7 @@ const ChildAttributes = () => {
       />
 
       <BulkActionDrawer
+        setIsCheck={setIsCheck}
         attributes={attributeData}
         ids={allId}
         title="Attribute Value(s)"

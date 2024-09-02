@@ -12,7 +12,7 @@ import useUtilsFunction from "@/hooks/useUtilsFunction";
 import PrintReceipt from "@/components/form/others/PrintReceipt";
 import SelectStatus from "@/components/form/selectOption/SelectStatus";
 
-const OrderTable = ({ orders }) => {
+const OrderTable = ({ orders, vendorId }) => {
   // console.log('globalSetting',globalSetting)
   const { t } = useTranslation();
   const { showDateTimeFormat, currency, getNumberTwo } = useUtilsFunction();
@@ -32,12 +32,12 @@ const OrderTable = ({ orders }) => {
 
             <TableCell>
               <span className="text-sm">
-                {showDateTimeFormat(order?.updatedDate)}
+                {showDateTimeFormat(order?.orderTime)}
               </span>
             </TableCell>
 
             <TableCell className="text-xs">
-              <span className="text-sm">{order?.user_info?.name}</span>{" "}
+              <span className="text-sm">{order?.customerName}</span>{" "}
             </TableCell>
 
             <TableCell>
@@ -49,7 +49,7 @@ const OrderTable = ({ orders }) => {
             <TableCell>
               <span className="text-sm font-semibold">
                 {currency}
-                {getNumberTwo(order?.total)}
+                {getNumberTwo(order?.totalAmount)}
               </span>
             </TableCell>
 
@@ -57,13 +57,17 @@ const OrderTable = ({ orders }) => {
               <Status status={order?.status} />
             </TableCell>
 
-            <TableCell className="text-center">
+            {/* <TableCell className="text-center">
               <SelectStatus id={order._id} order={order} />
-            </TableCell>
+            </TableCell> */}
 
             <TableCell className="text-right flex justify-end">
               <div className="flex justify-between items-center">
-                <PrintReceipt orderId={order._id} />
+                <PrintReceipt
+                  orderId={order._id}
+                  vendorId={vendorId}
+                  isVendor={true}
+                />
 
                 <span className="p-2 cursor-pointer text-gray-400 hover:text-emerald-600">
                   <Link to={`/order/${order._id}`}>

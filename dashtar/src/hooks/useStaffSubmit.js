@@ -9,11 +9,12 @@ import { AdminContext } from "@/context/AdminContext";
 import { SidebarContext } from "@/context/SidebarContext";
 import AdminServices from "@/services/AdminServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
+import VendorServices from "@/services/VendorServices";
 // import useTranslationValue from "./useTranslationValue";
 
 const useStaffSubmit = (id) => {
   const { state } = useContext(AdminContext);
-  const { adminInfo } = state;
+  const { userInfo } = state;
   const { isDrawerOpen, closeDrawer, setIsUpdate, lang } =
     useContext(SidebarContext);
   const [imageUrl, setImageUrl] = useState("");
@@ -36,7 +37,7 @@ const useStaffSubmit = (id) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-     window.location.reload("/");
+    // window.location.reload("/");
     try {
       setIsSubmitting(true);
 
@@ -46,32 +47,31 @@ const useStaffSubmit = (id) => {
       // );
 
       const staffData = {
-        name: {
-          [language]: data.name,
-          // ...nameTranslates,
-        },
+        name: data.name,
         email: data.email,
         password: data.password,
         phone: data.phone,
         role: data.role,
-        joiningDate: selectedDate
-          ? selectedDate
-          : dayjs(new Date()).format("YYYY-MM-DD"),
-        image: imageUrl,
-        lang: language,
+        profileImg: imageUrl,
+        // image: imageUrl,
+        // lang: language,
       };
 
-      console.log(staffData.role)
-
+      console.log(staffData.role);
+      // wizicodes:
       if (id) {
         // console.log('id is ',id)
-        const res = await AdminServices.updateStaff(id, staffData);
+        const res = await VendorServices.updateStaffs(
+          userInfo._id,
+          id,
+          staffData
+        );
         setIsUpdate(true);
         setIsSubmitting(false);
         notifySuccess(res.message);
         closeDrawer();
       } else {
-        const res = await AdminServices.addStaff(staffData);
+        const res = await VendorServices.addStaff(userInfo._id, staffData);
         setIsUpdate(true);
         setIsSubmitting(false);
         notifySuccess(res.message);
@@ -79,6 +79,7 @@ const useStaffSubmit = (id) => {
       }
     } catch (err) {
       notifyError(err ? err?.response?.data?.message : err?.message);
+      console.log(err)
       setIsSubmitting(false);
       closeDrawer();
     }
@@ -86,20 +87,20 @@ const useStaffSubmit = (id) => {
 
   const getStaffData = async () => {
     try {
-      const res = await AdminServices.getStaffById(id, {
-        email: adminInfo.email,
-      });
+      const res = await VendorServices.findStaffById(userInfo._id, id);
       if (res) {
         setResData(res);
-        setValue("name", res.name[language ? language : "en"]);
+        setValue("name", res.name);
         setValue("email", res.email);
         setValue("password");
         setValue("phone", res.phone);
         setValue("role", res.role);
-        setSelectedDate(dayjs(res.joiningData).format("YYYY-MM-DD"));
-        setImageUrl(res.image);
+        setSelectedDate(dayjs(res.createdAt).format("YYYY-MM-DD"));
+        setImageUrl(res.profileImg);
       }
+      console.log(res)
     } catch (err) {
+      console.log(err)
       notifyError(err ? err?.response?.data?.message : err?.message);
     }
   };
@@ -137,10 +138,10 @@ const useStaffSubmit = (id) => {
       getStaffData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, setValue, isDrawerOpen, adminInfo.email, clearErrors]);
+  }, [id, setValue, isDrawerOpen, userInfo.email, clearErrors]);
 
   useEffect(() => {
-    if (location.pathname === "/edit-profile" && Cookies.get("adminInfo")) {
+    if (location.pathname === "/edit-profile" && Cookies.get("userInfo")) {
       getStaffData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

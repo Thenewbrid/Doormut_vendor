@@ -12,7 +12,7 @@ const ParentCategory = ({
   setSelectedCategory,
   setDefaultCategory,
 }) => {
-  const { data, loading } = useAsync(CategoryServices?.getAllCategory);
+  const { data, loading } = useAsync(CategoryServices?.getCategoriesByStore);
   const { showingTranslateValue } = useUtilsFunction();
 
   const STYLE = `

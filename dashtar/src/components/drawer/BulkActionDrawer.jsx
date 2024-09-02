@@ -21,6 +21,7 @@ import ParentCategory from "@/components/category/ParentCategory";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 
 const BulkActionDrawer = ({
+  index,
   ids,
   title,
   lang,
@@ -28,6 +29,7 @@ const BulkActionDrawer = ({
   childId,
   attributes,
   isCheck,
+  setIsCheck,
 }) => {
   const { toggleBulkDrawer, isBulkDrawerOpen, closeBulkDrawer } =
     useContext(SidebarContext);
@@ -52,7 +54,7 @@ const BulkActionDrawer = ({
     setDefaultCategory,
     selectCategoryName,
     setSelectCategoryName,
-  } = useBulkActionSubmit(ids, lang, childId);
+  } = useBulkActionSubmit(ids, lang, childId, index);
 
   const motion = {
     motionName: "node-motion",
@@ -89,24 +91,29 @@ const BulkActionDrawer = ({
   };
 
   const handleSelect = (key) => {
+    if (key === undefined) return;
+
     const checkId = isCheck?.find((data) => data === key);
 
-    if (isCheck?.length === data[0]?.children?.length) {
+    if (isCheck?.length === data?.length) {
       return notifyError("This can't be select as a parent category!");
     } else if (checkId !== undefined) {
       return notifyError("This can't be select as a parent category!");
     } else if (key === childId) {
       return notifyError("This can't be select as a parent category!");
     } else {
-      if (key === undefined) return;
       setChecked(key);
+      setIsCheck((prevIsCheck) => [...prevIsCheck, key]);
 
-      const obj = data[0];
-      const result = findObject(obj, key);
+      let result;
+      for (const obj of data) {
+        result = findObject(obj, key);
+        if (result) break;
+      }
+
       setSelectCategoryName(showingTranslateValue(result?.name));
     }
   };
-
   const STYLE = `
   .rc-tree-child-tree {
     display: hidden;
@@ -304,7 +311,9 @@ const BulkActionDrawer = ({
                           })}
                           name="parent"
                           value={
-                            selectCategoryName ? selectCategoryName : "Home"
+                            selectCategoryName
+                              ? selectCategoryName
+                              : data[0]?.name?.[lang]
                           }
                           placeholder="parent category"
                           type="text"
@@ -363,7 +372,7 @@ const BulkActionDrawer = ({
                           })}
                           name="parent"
                           value={
-                            selectCategoryName ? selectCategoryName : "Home"
+                            selectCategoryName && selectCategoryName
                           }
                           placeholder="parent category"
                           type="text"

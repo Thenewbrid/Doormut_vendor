@@ -13,9 +13,10 @@ const sendEmail = (body, res, message) => {
     },
 
     //comment out this one if you usi custom server/domain
-    // tls: {
-    //   rejectUnauthorized: false,
-    // },
+    tls: {
+      rejectUnauthorized: false, 
+    },
+    
   });
 
   transporter.verify(function (err, success) {

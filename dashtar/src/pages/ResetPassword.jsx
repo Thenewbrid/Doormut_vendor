@@ -12,6 +12,7 @@ import AdminServices from "@/services/AdminServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import ImageLight from "@/assets/img/forgot-password-office.jpeg";
 import ImageDark from "@/assets/img/forgot-password-office-dark.jpeg";
+import VendorServices from "@/services/VendorServices";
 
 const ResetPassword = () => {
   const { t } = useTranslation();
@@ -30,14 +31,15 @@ const ResetPassword = () => {
   const submitHandler = ({ newPassword }) => {
     setLoading(true);
 
-    AdminServices.resetPassword({ newPassword, token })
+    // AdminServices.resetPassword({ newPassword, token }) wizicodes
+    VendorServices.resetPassword({ newPassword, token })
       .then((res) => {
         setLoading(false);
         notifySuccess(res.message);
       })
       .catch((err) => {
         setLoading(false);
-        notifyError(err ? err.response.data.message : err.message);
+        notifyError(err ? err?.response?.data?.message : err?.message);
       });
   };
 

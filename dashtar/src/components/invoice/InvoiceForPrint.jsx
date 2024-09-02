@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 
-const InvoiceForPrint = ({ data, printRef, globalSetting }) => {
+const InvoiceForPrint = ({ data, printRef, globalSetting, isVendor }) => {
   const { t } = useTranslation();
 
   const currency = globalSetting?.default_currency || "$";
@@ -218,19 +218,26 @@ const InvoiceForPrint = ({ data, printRef, globalSetting }) => {
                     <span>{t("GrossTotal")} :</span>{" "}
                     <span className="font-semibold ">
                       {currency}
-                      {parseFloat(or?.subTotal).toFixed(2)}
+                      {isVendor != true
+                        ? parseFloat(or?.subTotal).toFixed(2)
+                        : parseFloat(or?.totalAmount).toFixed(2)}
                     </span>
                   </h5>
 
-                  {or?.shippingCost > 0 && (
+                  {/* {or?.shippingCost > 0 && (
                     <h5 className="flex justify-between font-medium text-xs">
                       <span> {t("ShippingCostLower")} :</span>{" "}
                       <span className="font-semibold ">
                         {currency}
-                        {parseFloat(or?.shippingCost).toFixed(2)}
+                        {isVendor != true
+                          ? parseFloat(or?.shippingCost).toFixed(2)
+                          : parseFloat(or?.shippingCost / or?.cartNo).toFixed(
+                              2
+                            )}
                       </span>
                     </h5>
                   )}
+                  
                   {or?.discount > 0 && (
                     <h5 className="flex justify-between font-medium text-xs">
                       <span> {t("DiscountLower")} :</span>{" "}
@@ -239,12 +246,14 @@ const InvoiceForPrint = ({ data, printRef, globalSetting }) => {
                         {parseFloat(or?.discount).toFixed(2)}
                       </span>
                     </h5>
-                  )}
+                  )} */}
                   <h3 className="flex justify-between font-medium text-xs border-t border-black mt-2">
                     <span> {t("Total")} : </span>
                     <span className="font-semibold ">
                       {currency}
-                      {parseFloat(or?.total).toFixed(2)}
+                      {isVendor != true
+                        ? parseFloat(or?.total).toFixed(2)
+                        : parseFloat(or?.totalAmount).toFixed(2)}
                     </span>
                   </h3>
                 </div>

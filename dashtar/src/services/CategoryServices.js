@@ -17,6 +17,13 @@ const CategoryServices = {
     return requests.post("/category/add", body);
   },
 
+  getCategoriesByStore: async () => {
+    return requests.get("/category/storetype");
+  },
+  getAllCategoriesByStore: async () => {
+    return requests.get("/category/allstoretype");
+  },
+
   addAllCategory: async (body) => {
     return requests.post("/category/add/all", body);
   },

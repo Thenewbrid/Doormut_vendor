@@ -70,7 +70,7 @@ const routes = [
   },
 
   {
-    path: "/categories/:id",
+    path: "/categories/:id/:index",
     component: ChildCategory,
   },
   {

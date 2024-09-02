@@ -18,9 +18,22 @@ import useToggleDrawer from "@/hooks/useToggleDrawer";
 import AttributeServices from "@/services/AttributeServices";
 import CurrencyServices from "@/services/CurrencyServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
+import VendorServices from "@/services/VendorServices";
+import { AdminContext } from "@/context/AdminContext";
 
-const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
+const DeleteModal = ({
+  id,
+  ids,
+  setIsCheck,
+  category,
+  title,
+  useParamId,
+  index,
+}) => {
   const { isModalOpen, closeModal, setIsUpdate } = useContext(SidebarContext);
+  const { state } = useContext(AdminContext);
+  const { userInfo } = state;
+
   const { setServiceId } = useToggleDrawer();
   const location = useLocation();
 
@@ -100,7 +113,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
           setIsSubmitting(false);
         }
       } else if (
-        location.pathname === `/categories/${useParamId}` ||
+        location.pathname === `/categories/${useParamId}/${index}` ||
         category
       ) {
         // console.log('delete modal ')
@@ -178,7 +191,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
       }
 
       if (location.pathname === "/our-staff") {
-        const res = await AdminServices.deleteStaff(id);
+        const res = await VendorServices.deleteStaff(userInfo._id, id);
         setIsUpdate(true);
         notifySuccess(res.message);
         setServiceId();

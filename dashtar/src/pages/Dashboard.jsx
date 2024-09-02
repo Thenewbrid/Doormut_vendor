@@ -30,10 +30,14 @@ import NotFound from "@/components/table/NotFound";
 import PageTitle from "@/components/Typography/PageTitle";
 import { SidebarContext } from "@/context/SidebarContext";
 import OrderServices from "@/services/OrderServices";
+import VendorServices from "@/services/VendorServices";
+import { AdminContext } from "@/context/AdminContext";
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const { mode } = useContext(WindmillContext);
+  const { state } = useContext(AdminContext);
+  const { userInfo } = state;
 
   dayjs.extend(isBetween);
   dayjs.extend(isToday);
@@ -110,13 +114,15 @@ const Dashboard = () => {
         res[onlyDate] = { date: onlyDate, total: 0, order: 0 };
         salesReport.push(res[onlyDate]);
       }
+      console.log(res[onlyDate]);
+
       res[onlyDate].total += value.total;
       res[onlyDate].order += 1;
       return res;
     }, {});
 
     setSalesReport(salesReport);
-
+    console.log(dashboardOrderAmount);
     const todayPaymentMethodData = [];
     const yesterDayPaymentMethodData = [];
 
@@ -234,6 +240,21 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardOrderAmount]);
 
+  ///wizicodes:-------|||------start-------////
+  const {
+    data: orderData,
+    loading: loadingOrders,
+    error: orderError,
+  } = useAsync(() => VendorServices.getVendorOrders(userInfo.store_id));
+
+  const {
+    data: recentOrders,
+    loading: loadre,
+    error: loaderr,
+  } = useAsync(() =>
+    VendorServices.getVendorOrders(userInfo.store_id, undefined, true)
+  );
+
   return (
     <>
       <PageTitle>{t("DashboardOverview")}</PageTitle>
@@ -244,10 +265,10 @@ const Dashboard = () => {
           title="Today Order"
           title2="TodayOrder"
           Icon={ImStack}
-          cash={todayCashPayment || 0}
-          card={todayCardPayment || 0}
-          credit={todayCreditPayment || 0}
-          price={todayOrderAmount || 0}
+          cash={orderData?.earnings?.today?.cashAmount}
+          card={orderData?.earnings?.today?.cardAmount}
+          credit={orderData?.earnings?.today?.creditAmount}
+          price={orderData?.earnings?.today?.totalAmount}
           className="text-white dark:text-emerald-100 bg-teal-600"
           loading={loadingOrderAmount}
         />
@@ -257,10 +278,10 @@ const Dashboard = () => {
           title="Yesterday Order"
           title2="YesterdayOrder"
           Icon={ImStack}
-          cash={yesterdayCashPayment || 0}
-          card={yesterdayCardPayment || 0}
-          credit={yesterdayCreditPayment || 0}
-          price={yesterdayOrderAmount || 0}
+          cash={orderData?.earnings?.yesterday?.cashAmount}
+          card={orderData?.earnings?.yesterday?.cardAmount}
+          credit={orderData?.earnings?.yesterday?.creditAmount}
+          price={orderData?.earnings?.yesterday?.totalAmount}
           className="text-white dark:text-orange-100 bg-orange-400"
           loading={loadingOrderAmount}
         />
@@ -269,7 +290,7 @@ const Dashboard = () => {
           mode={mode}
           title2="ThisMonth"
           Icon={FiShoppingCart}
-          price={dashboardOrderAmount?.thisMonthlyOrderAmount || 0}
+          price={orderData?.earnings?.monthly?.totalAmount}
           className="text-white dark:text-emerald-100 bg-blue-500"
           loading={loadingOrderAmount}
         />
@@ -279,7 +300,7 @@ const Dashboard = () => {
           title2="LastMonth"
           Icon={ImCreditCard}
           loading={loadingOrderAmount}
-          price={dashboardOrderAmount?.lastMonthOrderAmount || 0}
+          price={orderData?.earnings?.lastmonth?.totalAmount}
           className="text-white dark:text-teal-100 bg-cyan-600"
         />
 
@@ -287,7 +308,7 @@ const Dashboard = () => {
           mode={mode}
           title2="AllTimeSales"
           Icon={ImCreditCard}
-          price={dashboardOrderAmount?.totalAmount || 0}
+          price={orderData?.earnings?.total}
           className="text-white dark:text-emerald-100 bg-emerald-600"
           loading={loadingOrderAmount}
         />
@@ -298,14 +319,14 @@ const Dashboard = () => {
           title="Total Order"
           Icon={FiShoppingCart}
           loading={loadingOrderCount}
-          quantity={dashboardOrderCount?.totalOrder || 0}
+          quantity={orderData?.totalOrders || 0}
           className="text-orange-600 dark:text-orange-100 bg-orange-100 dark:bg-orange-500"
         />
         <CardItem
           title={t("OrderPending")}
           Icon={FiRefreshCw}
           loading={loadingOrderCount}
-          quantity={dashboardOrderCount?.totalPendingOrder?.count || 0}
+          quantity={orderData?.pendingOrders || 0}
           amount={dashboardOrderCount?.totalPendingOrder?.total || 0}
           className="text-blue-600 dark:text-blue-100 bg-blue-100 dark:bg-blue-500"
         />
@@ -313,14 +334,14 @@ const Dashboard = () => {
           title={t("OrderProcessing")}
           Icon={FiTruck}
           loading={loadingOrderCount}
-          quantity={dashboardOrderCount?.totalProcessingOrder || 0}
+          quantity={orderData?.processingOrders || 0}
           className="text-teal-600 dark:text-teal-100 bg-teal-100 dark:bg-teal-500"
         />
         <CardItem
           title={t("OrderDelivered")}
           Icon={FiCheck}
           loading={loadingOrderCount}
-          quantity={dashboardOrderCount?.totalDeliveredOrder || 0}
+          quantity={orderData?.deliveredOrders || 0}
           className="text-emerald-600 dark:text-emerald-100 bg-emerald-100 dark:bg-emerald-500"
         />
       </div>
@@ -331,7 +352,7 @@ const Dashboard = () => {
           loading={loadingOrderAmount}
           title={t("WeeklySales")}
         >
-          <LineChart salesReport={salesReport} />
+          <LineChart salesReport={orderData} />
         </ChartCard>
 
         <ChartCard
@@ -339,7 +360,7 @@ const Dashboard = () => {
           loading={loadingBestSellerProduct}
           title={t("BestSellingProducts")}
         >
-          <PieChart data={bestSellerProductChart} />
+          <PieChart data={orderData} />
         </ChartCard>
       </div>
 
@@ -361,13 +382,13 @@ const Dashboard = () => {
                 <TableCell>{t("CustomerName")} </TableCell>
                 <TableCell> {t("MethodTbl")} </TableCell>
                 <TableCell> {t("AmountTbl")} </TableCell>
-                <TableCell>{t("OderStatusTbl")}</TableCell>
+                {/* // <TableCell>{t("OderStatusTbl")}</TableCell> */}
                 <TableCell>{t("ActionTbl")}</TableCell>
                 <TableCell className="text-right">{t("InvoiceTbl")}</TableCell>
               </tr>
             </TableHeader>
 
-            <OrderTable orders={dataTable} />
+            <OrderTable orders={recentOrders} />
           </Table>
           <TableFooter>
             <Pagination

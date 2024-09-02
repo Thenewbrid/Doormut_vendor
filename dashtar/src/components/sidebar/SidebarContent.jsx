@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { NavLink, Route, useHistory,Link } from "react-router-dom";
+import { NavLink, Route, useHistory, Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 import { Button, WindmillContext } from "@windmill/react-ui";
@@ -14,26 +14,22 @@ import logoDark from "@/assets/img/logo/logo-dark.svg";
 import SidebarSubMenu from "@/components/sidebar/SidebarSubMenu";
 import { AdminContext } from "@/context/AdminContext";
 
-
-
-const SidebarContent = ({handleLogout}) => {
+const SidebarContent = ({ handleLogout }) => {
   const { t } = useTranslation();
   const { mode } = useContext(WindmillContext);
-   const { state, dispatch } = useContext(AdminContext);
-   const { adminInfo } = state;
-  
-   
+  const { state, dispatch } = useContext(AdminContext);
+  const { userInfo } = state;
+
   const info = () => {
     dispatch({ type: "USER_LOGIN", payload: res });
-    Cookies.get("adminInfo");
-  }
+    Cookies.get("userInfo");
+  };
   const handleLogOut = () => {
     dispatch({ type: "USER_LOGOUT" });
-    Cookies.remove("adminInfo");
+    Cookies.remove("userInfo");
     handleLogout();
     // window.location.replace(`${import.meta.env.VITE_APP_ADMIN_DOMAIN}/login`);
   };
-
 
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
@@ -45,41 +41,43 @@ const SidebarContent = ({handleLogout}) => {
         )}
       </a>
       {/* DASHBOARD CONTENT FOR ADMIN */}
-      {adminInfo.role === "Admin" && (
-      <ul className="mt-8">
-        {admin.map((route) =>
-          route.routes ? (
-            <SidebarSubMenu route={route} key={route.name} />
-          ) : (
-            <li className="relative" key={route.name}>
-              <NavLink
-                exact
-                to={route.path}
-                target={`${route?.outside ? "_blank" : "_self"}`}
-                className="px-6 py-4 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-emerald-700 dark:hover:text-gray-200"
-                activeClassName="text-emerald-500 dark:text-gray-100"
-                activeStyle={{
-                  color: "#0d9e6d",
-                }}
-                rel="noreferrer"
-              >
-                <Route path={route.path} exact={route.exact}>
-                  <span
-                    className="absolute inset-y-0 left-0 w-1 bg-emerald-500 rounded-tr-lg rounded-br-lg"
-                    aria-hidden="true"
-                  ></span>
-                </Route>
-                <route.icon className="w-5 h-5" aria-hidden="true" />
-                <span className="ml-4">{t(`${route.name}`)}</span>
-              </NavLink>
-            </li>
-          )
-        )}
-      </ul>
-      )}
+      {/* {userInfo.role === "Admin" && ( wizicodes */}
+      {userInfo.role === "Admin" ||
+        (userInfo.role === "Super Admin" && (
+          <ul className="mt-8">
+            {admin.map((route) =>
+              route.routes ? (
+                <SidebarSubMenu route={route} key={route.name} />
+              ) : (
+                <li className="relative" key={route.name}>
+                  <NavLink
+                    exact
+                    to={route.path}
+                    target={`${route?.outside ? "_blank" : "_self"}`}
+                    className="px-6 py-4 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-emerald-700 dark:hover:text-gray-200"
+                    activeClassName="text-emerald-500 dark:text-gray-100"
+                    activeStyle={{
+                      color: "#0d9e6d",
+                    }}
+                    rel="noreferrer"
+                  >
+                    <Route path={route.path} exact={route.exact}>
+                      <span
+                        className="absolute inset-y-0 left-0 w-1 bg-emerald-500 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"
+                      ></span>
+                    </Route>
+                    <route.icon className="w-5 h-5" aria-hidden="true" />
+                    <span className="ml-4">{t(`${route.name}`)}</span>
+                  </NavLink>
+                </li>
+              )
+            )}
+          </ul>
+        ))}
       {/* END OF DASHBOARD CONTENT FOR ADMIN */}
       {/* DASHBOARD CONTENT FOR INVENTORY-MANAGER */}
-      {adminInfo.role === "Manager" && (
+      {userInfo.role === "Manager" && (
         <ul className="mt-8">
           {sidebar.map((route) =>
             route.routes ? (
@@ -113,7 +111,7 @@ const SidebarContent = ({handleLogout}) => {
       )}
       {/* END OF DASHBOARD CONTENT FOR INVENTORY-MANAGER */}
       {/* DASHBOARD CONTENT FOR CASHIER */}
-      {adminInfo.role === "Cashier" && (
+      {userInfo.role === "Cashier" && (
         <ul className="mt-8">
           {cashier.map((route) =>
             route.routes ? (

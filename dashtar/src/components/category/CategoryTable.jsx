@@ -21,9 +21,12 @@ const CategoryTable = ({
   setIsCheck,
   useParamId,
   showChild,
+  indexed,
+  isSuper
 }) => {
   const { title, serviceId, handleModalOpen, handleUpdate } = useToggleDrawer();
   const { showingTranslateValue } = useUtilsFunction();
+
 
   const handleClick = (e) => {
     const { id, checked } = e.target;
@@ -31,20 +34,31 @@ const CategoryTable = ({
     if (!checked) {
       setIsCheck(isCheck.filter((item) => item !== id));
     }
+
   };
 
   return (
     <>
       {isCheck?.length < 1 && (
-        <DeleteModal useParamId={useParamId} id={serviceId} title={title} />
+        <DeleteModal
+          useParamId={useParamId}
+          index={indexed}
+          id={serviceId}
+          title={title}
+        />
       )}
 
       <MainDrawer>
-        <CategoryDrawer id={serviceId} data={data} lang={lang} />
+        <CategoryDrawer
+          isSuper={isSuper}
+          id={serviceId}
+          data={data}
+          lang={lang}
+        />
       </MainDrawer>
 
       <TableBody>
-        {categories?.map((category) => (
+        {categories?.map((category, index) => (
           <TableRow key={category._id}>
             <TableCell>
               <CheckBox
@@ -78,7 +92,7 @@ const CategoryTable = ({
             <TableCell className="font-medium text-sm ">
               {category?.children.length > 0 ? (
                 <Link
-                  to={`/categories/${category?._id}`}
+                  to={`/categories/${category?._id}/${index}`}
                   className="text-blue-700"
                 >
                   {showingTranslateValue(category?.name)}
@@ -128,6 +142,7 @@ const CategoryTable = ({
             <TableCell>
               <EditDeleteButton
                 id={category?._id}
+                index={index}
                 parent={category}
                 isCheck={isCheck}
                 children={category?.children}
