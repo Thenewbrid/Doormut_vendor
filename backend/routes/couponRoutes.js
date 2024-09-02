@@ -11,7 +11,8 @@ const {
   deleteCoupon,
   updateManyCoupons,
   deleteManyCoupons,
-} = require('../controller/couponController');
+  redeemCoupon,
+} = require("../controller/couponController");
 
 //add a coupon
 router.post('/add', addCoupon);
@@ -42,5 +43,6 @@ router.delete('/:id', deleteCoupon);
 
 //delete many coupon
 router.patch('/delete/many', deleteManyCoupons);
+router.post("/redeem", redeemCoupon);
 
 module.exports = router;

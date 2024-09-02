@@ -4,7 +4,10 @@ const {
   addCategory,
   addAllCategory,
   getAllCategory,
+  getStoreTypes,
   getAllCategories,
+  getCategoriesByStore,
+  getAllCategoriesByStore,
   getShowingCategory,
   getCategoryById,
   updateCategory,
@@ -14,6 +17,7 @@ const {
   updateManyCategory
 
 } = require('../controller/categoryController');
+const { isAuth } = require("../config/auth");
 
 //add a category
 router.post('/add', addCategory);
@@ -24,10 +28,16 @@ router.post('/add/all', addAllCategory);
 //get only showing category
 router.get('/show', getShowingCategory);
 
+router.get('/stores', getStoreTypes);
+
 //get all category
 router.get('/', getAllCategory);
 //get all category
 router.get('/all', getAllCategories);
+//
+router.get("/storetype", isAuth, getCategoriesByStore);
+
+router.get("/allstoretype", isAuth, getAllCategoriesByStore);
 
 //get a category
 router.get('/:id', getCategoryById);

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema(
   {
@@ -13,6 +13,23 @@ const categorySchema = new mongoose.Schema(
     slug: {
       type: String,
       required: false,
+    },
+    store_ids: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
+    storeType: {
+      type: String,
+      required: false,
+      enum: [
+        "Supermarket",
+        "Butchery",
+        "Fruits and Vegetables",
+        "Drinks and Liquor",
+        "Pastery",
+      ],
     },
     parentId: {
       type: String,
@@ -33,8 +50,8 @@ const categorySchema = new mongoose.Schema(
     status: {
       type: String,
       lowercase: true,
-      enum: ['show', 'hide'],
-      default: 'show',
+      enum: ["show", "hide"],
+      default: "show",
     },
   },
   {
@@ -44,5 +61,5 @@ const categorySchema = new mongoose.Schema(
 
 // module.exports = categorySchema;
 
-const Category = mongoose.model('Category', categorySchema);
+const Category = mongoose.model("Category", categorySchema);
 module.exports = Category;

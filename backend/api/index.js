@@ -7,10 +7,10 @@ const path = require("path");
 // const { Server } = require("socket.io");
 
 const { connectDB } = require("../config/db");
-const timeRoutes = require("../routes/timeRoutes");
 const productRoutes = require("../routes/productRoutes");
 const customerRoutes = require("../routes/customerRoutes");
 const adminRoutes = require("../routes/adminRoutes");
+const cityPriceRoutes = require("../routes/cityPriceRoutes");
 const vendorRoutes = require("../routes/vendorRoute");
 const orderRoutes = require("../routes/orderRoutes");
 const customerOrderRoutes = require("../routes/customerOrderRoutes");
@@ -47,9 +47,8 @@ app.get("/", (req, res) => {
 
 //this for route will need for store front, also for admin dashboard
 app.use("/api/products/", productRoutes);
-app.use("/api/vendors/", vendorRoutes);
-app.use("/api/time/", timeRoutes);
-app.use("/api/category/", categoryRoutes);
+app.use("/api/vendors/",  vendorRoutes);
+app.use("/api/city-price/", cityPriceRoutes);
 app.use("/api/category/", categoryRoutes);
 app.use("/api/coupon/", couponRoutes);
 app.use("/api/customer/", customerRoutes);

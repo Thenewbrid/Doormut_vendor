@@ -3,7 +3,8 @@ const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
 const jwt = require("jsonwebtoken");
-const { signInToken, tokenForVerify, sendEmail } = require("../config/auth");
+const { signInToken, tokenForVerify } = require("../config/auth");
+const { sendEmail } = require("../lib/email-sender/sender");
 const Admin = require("../models/Admin");
 
 const registerAdmin = async (req, res) => {
@@ -50,7 +51,6 @@ const loginAdmin = async (req, res) => {
         phone: admin.phone,
         email: admin.email,
         image: admin.image,
-        role: admin.role,
       });
     } else {
       res.status(401).send({

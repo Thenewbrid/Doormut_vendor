@@ -83,6 +83,7 @@ const updateCoupon = async (req, res) => {
       coupon.couponCode = req.body.couponCode;
       coupon.endTime = dayjs().utc().format(req.body.endTime);
       // coupon.discountPercentage = req.body.discountPercentage;
+      coupon.limit = req.body.limit;
       coupon.minimumAmount = req.body.minimumAmount;
       coupon.productType = req.body.productType;
       coupon.discountType = req.body.discountType;
@@ -170,6 +171,23 @@ const deleteManyCoupons = async (req, res) => {
   }
 };
 
+//wizicodes: find a coupon by its code, check for availability, give conditions. limit==null means unlimited users
+const redeemCoupon = async (req, res) => {
+  const { couponCode } = req.body;
+  const coupon = await Coupon.findOne({ couponCode });
+  if (!coupon) {
+    res.status(404).json({ error: "Coupon not found" });
+  } else if (coupon.limit != null && coupon.useCount >= coupon.limit) {
+    res.status(400).json({ error: "Coupon has reached limit" });
+  } else if (coupon.endTime < new Date()) {
+    res.status(400).json({ error: "Coupon has expired" });
+  } else {
+    coupon.useCount += 1;
+    await coupon.save();
+    res.json({ message: "Coupon redeemed successfully" });
+  }
+};
+
 module.exports = {
   addCoupon,
   addAllCoupon,
@@ -181,4 +199,5 @@ module.exports = {
   deleteCoupon,
   updateManyCoupons,
   deleteManyCoupons,
+  redeemCoupon,
 };

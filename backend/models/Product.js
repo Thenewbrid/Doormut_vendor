@@ -14,6 +14,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    store_id: {
+      type: String,
+      required: false,
+    },
     title: {
       type: Object,
       required: true,

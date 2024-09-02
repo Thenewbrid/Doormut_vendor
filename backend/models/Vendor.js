@@ -15,6 +15,16 @@ const vendorSchema = new mongoose.Schema(
     //   unique: true,
     //   lowercase: true,
     // },
+    store_email: {
+      type: String,
+      required: false,
+      unique: true,
+      lowercase: true,
+    },
+    store_phone: {
+      type: String,
+      required: false,
+    },
     store_name: {
       type: String,
       required: true,
@@ -28,6 +38,7 @@ const vendorSchema = new mongoose.Schema(
     store_type: {
       type: String,
       required: true,
+      lowercase: true,
       enum: [
         "Supermarket",
         "Butchery",
@@ -104,6 +115,12 @@ const vendorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    map_coordinates: [
+      {
+        type: Number,
+        required: false,
+      },
+    ],
     store_coverImg: {
       type: String,
       required: false,
@@ -111,6 +128,11 @@ const vendorSchema = new mongoose.Schema(
     store_profileImg: {
       type: String,
       required: false,
+    },
+    is_verified: {
+      type: Boolean,
+      default: false,
+      required: true,
     },
     is_active: {
       type: Boolean,
@@ -150,6 +172,16 @@ vendorSchema.virtual("averageRating").get(function () {
   const count = ratings.length;
   return sum / count;
 });
+
+vendorSchema.methods.verify = function () {
+  this.is_verified = true;
+  return this.save();
+};
+
+vendorSchema.methods.unverify = function () {
+  this.is_verified = false;
+  return this.save();
+};
 
 vendorSchema.methods.freeze = function () {
   this.is_frozen = true;

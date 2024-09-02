@@ -1,5 +1,14 @@
 const Order = require("../models/Order");
 
+const getAll = async (req, res) => {
+  try {
+    const orders = await Order.find({}).sort({ _id: -1 });
+    res.send(orders);
+  } catch (error) {
+    res.send({ message: error });
+  }
+};
+
 const getAllOrders = async (req, res) => {
   const {
     day,
@@ -189,7 +198,7 @@ const deleteOrder = (req, res) => {
 // get dashboard recent order
 const getDashboardRecentOrder = async (req, res) => {
   try {
-    const { page, limit } = req.query;
+    const { page, limit, status, search, method, dateRange, day } = req.query;
 
     const pages = Number(page) || 1;
     const limits = Number(limit) || 8;
@@ -212,10 +221,78 @@ const getDashboardRecentOrder = async (req, res) => {
       .skip(skip)
       .limit(limits);
 
+    let filteredOrders = orders;
+
+    if (search) {
+      filteredOrders = filteredOrders.filter((order) => {
+        const searchQuery = search.toLowerCase();
+        return (
+          order.user_info.name.toLowerCase().includes(searchQuery) ||
+          order.invoice.toString().includes(searchQuery)
+        );
+      });
+    }
+
+    if (status) {
+      filteredOrders = filteredOrders.filter(
+        (order) => order.status === status
+      );
+    }
+
+    if (method) {
+      filteredOrders = filteredOrders.filter(
+        (order) => order.paymentMethod === method
+      );
+    }
+    const today = new Date();
+
+    if (dateRange) {
+      const [startDate, endDate] = dateRange.split(",");
+      const startDateObj = new Date(startDate + "T00:00:00.000Z"); // add time zone offset
+      const endDateObj = new Date(endDate + "T23:59:59.999Z"); // add time zone offset
+      filteredOrders = filteredOrders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return (
+          orderDate.getTime() >= startDateObj.getTime() &&
+          orderDate.getTime() <= endDateObj.getTime()
+        );
+      });
+    }
+
+    if (day === "5") {
+      const fiveDaysAgo = new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000);
+      filteredOrders = filteredOrders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= fiveDaysAgo;
+      });
+    } else if (day === "7") {
+      const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      filteredOrders = filteredOrders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= sevenDaysAgo;
+      });
+    } else if (day === "15") {
+      const fifteenDaysAgo = new Date(
+        today.getTime() - 15 * 24 * 60 * 60 * 1000
+      );
+      filteredOrders = filteredOrders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= fifteenDaysAgo;
+      });
+    } else if (day === "30") {
+      const thirtyDaysAgo = new Date(
+        today.getTime() - 30 * 24 * 60 * 60 * 1000
+      );
+      filteredOrders = filteredOrders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= thirtyDaysAgo;
+      });
+    }
+    // -----------------end---------------------------------//
     // console.log('order------------<', orders);
 
     res.send({
-      orders: orders,
+      orders: filteredOrders,
       page: page,
       limit: limit,
       totalOrder: totalDoc,
@@ -652,6 +729,7 @@ const getDashboardOrders = async (req, res) => {
 };
 
 module.exports = {
+  getAll,
   getAllOrders,
   getOrderById,
   getOrderCustomer,

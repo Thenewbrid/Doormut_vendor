@@ -20,14 +20,19 @@ const signInToken = (user) => {
   );
 };
 
-const vendorSignInToken = (vendor) => {
+const vendorSignInToken = (staff, vendor) => {
   return jwt.sign(
     {
       _id: vendor._id,
-      auth_id: vendor.auth_id,
-      auth_password: vendor.auth_password,
+      store_id: vendor.store_id,
+      store_name: vendor.store_name,
+      store_type: vendor.store_type,
+      staffId: staff._id,
+      name: staff.name,
+      email: staff.email,
+      role: staff.role,
     },
-    process.env.JWT_SECRET_FOR_VERIFY,
+    process.env.JWT_SECRET,
     { expiresIn: "2d" }
   );
 };
@@ -70,6 +75,7 @@ const isAuth = async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
+    console.log(err);
     res.status(401).send({
       message: err.message,
     });

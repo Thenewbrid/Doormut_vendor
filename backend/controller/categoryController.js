@@ -34,6 +34,17 @@ const addAllCategory = async (req, res) => {
   }
 };
 
+const getStoreTypes = async (req, res) => {
+  try {
+    const storeTypes = Category.schema.path("storeType").enumValues;
+    res.json(storeTypes);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 // get status show category
 const getShowingCategory = async (req, res) => {
   try {
@@ -66,9 +77,46 @@ const getAllCategory = async (req, res) => {
   }
 };
 
-const getAllCategories = async (req, res) => {
+// wizicodes: get categories by storeType
+const getCategoriesByStore = async (req, res) => {
   try {
     const categories = await Category.find({}).sort({ _id: -1 });
+
+    const categoryList = readyToParentAndChildrenCategory(categories).filter(
+      (items) =>
+        items.id === "Root" &&
+        items.parentName.toLowerCase() === req.user.store_type.toLowerCase()
+    );
+    //  console.log('categoryList',categoryList)
+    res.send(categoryList);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const getAllCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({}).sort({
+      _id: -1,
+    });
+
+    res.send(categories);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const getAllCategoriesByStore = async (req, res) => {
+  try {
+    const categories = await Category.find({
+      parentName: req.user.store_type,
+    }).sort({
+      _id: -1,
+    });
 
     res.send(categories);
   } catch (err) {
@@ -99,6 +147,7 @@ const updateCategory = async (req, res) => {
         ...category.description,
         ...req.body.description,
       };
+      category.storeType = req.body.storeType;
       category.icon = req.body.icon;
       category.status = req.body.status;
       category.parentId = req.body.parentId
@@ -144,6 +193,7 @@ const updateManyCategory = async (req, res) => {
       message: "Categories update successfully!",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send({
       message: err.message,
     });
@@ -237,10 +287,12 @@ const readyToParentAndChildrenCategory = (categories, parentId = null) => {
   for (let cate of Categories) {
     categoryList.push({
       _id: cate._id,
+      id: cate.id,
       name: cate.name,
       parentId: cate.parentId,
       parentName: cate.parentName,
       description: cate.description,
+      storeType: cate.storeType,
       icon: cate.icon,
       status: cate.status,
       children: readyToParentAndChildrenCategory(categories, cate._id),
@@ -254,6 +306,9 @@ module.exports = {
   addCategory,
   addAllCategory,
   getAllCategory,
+  getCategoriesByStore,
+  getAllCategoriesByStore,
+  getStoreTypes,
   getShowingCategory,
   getCategoryById,
   updateCategory,

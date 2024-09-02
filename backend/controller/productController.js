@@ -1,6 +1,6 @@
 const Product = require("../models/Product");
 const mongoose = require("mongoose");
-const Category = require("../models/Category");
+// const Category = require("../models/Category");
 const { languageCodes } = require("../utils/data");
 
 const addProduct = async (req, res) => {
@@ -50,10 +50,15 @@ const getShowingProducts = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const { title, category, price, page, limit } = req.query;
+  const { title, category, price, page, limit, store_id } = req.query;
 
   let queryObject = {};
   let sortObject = {};
+
+  if (store_id) {
+    queryObject.store_id = store_id;
+  }
+
   if (title) {
     const titleQueries = languageCodes.map((lang) => ({
       [`title.${lang}`]: { $regex: `${title}`, $options: "i" },
@@ -89,8 +94,6 @@ const getAllProducts = async (req, res) => {
     sortObject = { _id: -1 };
   }
 
-  // console.log('sortObject', sortObject);
-
   if (category) {
     queryObject.categories = category;
   }
@@ -116,7 +119,7 @@ const getAllProducts = async (req, res) => {
       pages,
     });
   } catch (err) {
-    // console.log("error", err);
+    console.log("error", err);
     res.status(500).send({
       message: err.message,
     });

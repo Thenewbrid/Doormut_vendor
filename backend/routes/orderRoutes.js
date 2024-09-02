@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  getAll,
   getAllOrders,
   getOrderById,
   getOrderCustomer,
@@ -12,6 +13,9 @@ const {
   getDashboardCount,
   getDashboardAmount,
 } = require("../controller/orderController");
+
+//get all orders
+router.get("/all", getAll);
 
 //get all orders
 router.get("/", getAllOrders);
