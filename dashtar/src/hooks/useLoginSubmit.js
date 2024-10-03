@@ -15,6 +15,8 @@ const useLoginSubmit = () => {
   const reduxDispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const { dispatch } = useContext(AdminContext);
+  const [unAuthModal, setUnAuthModal] = useState(false);
+  const [errMessage, setErrMessage] = useState(false);
   const history = useHistory();
   const location = useLocation();
   const {
@@ -36,6 +38,7 @@ const useLoginSubmit = () => {
     setLoading(true);
     const cookieTimeOut = 0.5;
     // return;
+    console.log(store_id);
 
     if (location.pathname === "/login") {
       reduxDispatch(removeSetting("globalSetting"));
@@ -56,7 +59,10 @@ const useLoginSubmit = () => {
           }
         })
         .catch((err) => {
-          notifyError(err?.response?.data?.message || err?.message);
+          err?.response?.status !== 500
+            ? notifyError(err?.response?.data?.message || err?.message)
+            : err?.response?.status === 500 && setUnAuthModal(true),
+            setErrMessage(err?.response?.data?.message || err?.message);
           // notifyError(err ? err?.response?.data?.message : err?.message);
           setLoading(false);
         });
@@ -85,7 +91,7 @@ const useLoginSubmit = () => {
     }
 
     if (location.pathname === "/forgot-password") {
-      VendorServices.forgetPassword({ verifyEmail })
+      VendorServices.forgetPassword({ verifyEmail, store_id })
         .then((res) => {
           setLoading(false);
           notifySuccess(res.message);
@@ -99,12 +105,17 @@ const useLoginSubmit = () => {
         });
     }
   };
+
   return {
     onSubmit,
     register,
     handleSubmit,
     errors,
     loading,
+    unAuthModal,
+    setUnAuthModal,
+    errMessage,
+    setErrMessage,
   };
 };
 

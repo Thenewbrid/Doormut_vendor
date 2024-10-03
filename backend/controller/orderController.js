@@ -44,7 +44,7 @@ const getAllOrders = async (req, res) => {
   if (!status) {
     queryObject.$or = [
       { status: { $regex: `Pending`, $options: "i" } },
-      { status: { $regex: `Processing`, $options: "i" } },
+      { status: { $regex: `Processed`, $options: "i" } },
       { status: { $regex: `Delivered`, $options: "i" } },
       { status: { $regex: `Cancel`, $options: "i" } },
     ];
@@ -208,7 +208,7 @@ const getDashboardRecentOrder = async (req, res) => {
 
     queryObject.$or = [
       { status: { $regex: `Pending`, $options: "i" } },
-      { status: { $regex: `Processing`, $options: "i" } },
+      { status: { $regex: `Processed`, $options: "i" } },
       { status: { $regex: `Delivered`, $options: "i" } },
       { status: { $regex: `Cancel`, $options: "i" } },
     ];
@@ -331,7 +331,7 @@ const getDashboardCount = async (req, res) => {
     const totalProcessingOrder = await Order.aggregate([
       {
         $match: {
-          status: "Processing",
+          status: "Processed",
         },
       },
       {
@@ -660,7 +660,7 @@ const getDashboardOrders = async (req, res) => {
     const totalProcessingOrder = await Order.aggregate([
       {
         $match: {
-          status: "Processing",
+          status: "Processed",
         },
       },
       {

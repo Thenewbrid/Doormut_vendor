@@ -43,9 +43,7 @@ const StaffTable = ({ staffs, lang }) => {
                   alt="staff"
                 />
                 <div>
-                  <h2 className="text-sm font-medium">
-                    {staff?.name}
-                  </h2>
+                  <h2 className="text-sm font-medium">{staff?.name}</h2>
                 </div>
               </div>
             </TableCell>
@@ -59,8 +57,8 @@ const StaffTable = ({ staffs, lang }) => {
 
             <TableCell>
               <span className="text-sm">
-                {/* {dayjs(staff.joiningData).format("DD/MM/YYYY")} */}
-                {showDateFormat(staff.createdAt)}
+                {/* {days(staff.joiningDate).format("DD/MM/YYYY")} */}
+                {showDateFormat(staff.joiningDate)}
               </span>
             </TableCell>
             <TableCell>

@@ -57,9 +57,9 @@ const OrderTable = ({ orders, vendorId }) => {
               <Status status={order?.status} />
             </TableCell>
 
-            {/* <TableCell className="text-center">
+            <TableCell className="text-center">
               <SelectStatus id={order._id} order={order} />
-            </TableCell> */}
+            </TableCell>
 
             <TableCell className="text-right flex justify-end">
               <div className="flex justify-between items-center">

@@ -6,7 +6,7 @@ const Invoice = ({ data, currency, getNumberTwo }) => {
   return (
     <>
       <TableBody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 text-serif text-sm ">
-        {data[0]?.cart?.map((item, i) => (
+        {data?.cart?.map((item, i) => (
           <TableRow key={i} className="dark:border-gray-700 dark:text-gray-400">
             <TableCell className="px-6 py-1 whitespace-nowrap font-normal text-gray-500 text-left">
               {i + 1}{" "}

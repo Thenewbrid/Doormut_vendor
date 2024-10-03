@@ -97,6 +97,8 @@ const useCategorySubmit = (id, data, isSuper) => {
     }
   };
 
+
+
   useEffect(() => {
     if (!isDrawerOpen) {
       setResData({});

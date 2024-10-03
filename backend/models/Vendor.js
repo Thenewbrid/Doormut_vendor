@@ -38,7 +38,6 @@ const vendorSchema = new mongoose.Schema(
     store_type: {
       type: String,
       required: true,
-      lowercase: true,
       enum: [
         "Supermarket",
         "Butchery",
@@ -65,7 +64,7 @@ const vendorSchema = new mongoose.Schema(
         email: {
           type: String,
           required: true,
-          unique: true,
+          unique: false,
           lowercase: true,
         },
         phone: {
@@ -113,7 +112,7 @@ const vendorSchema = new mongoose.Schema(
     ],
     store_address: {
       type: String,
-      required: true,
+      required: false,
     },
     map_coordinates: [
       {

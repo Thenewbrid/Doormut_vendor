@@ -10,7 +10,7 @@ const {
 const { sendEmail } = require("../lib/email-sender/sender");
 const Vendor = require("../models/Vendor");
 const Orders = require("../models/Order");
-const Product = require("../models/Products");
+const Product = require("../models/Product");
 const mongoose = require("mongoose");
 
 const getAllVendors = async (req, res) => {
@@ -128,6 +128,8 @@ const registerVendor = async (req, res) => {
     // console.log("error", err);
   }
 };
+
+//to loogin a staff under a particular vendor/store
 const loginVendor = async (req, res) => {
   try {
     const vendor = await Vendor.findOne({
@@ -137,25 +139,34 @@ const loginVendor = async (req, res) => {
       const staff = vendor.staffs.find(
         (staff) => staff.email === req.body.email
       );
-      if (staff && bcrypt.compareSync(req.body.password, staff.password)) {
-        const token = vendorSignInToken(staff, vendor);
-        res.send({
-          token,
-          _id: vendor._id,
-          store_id: vendor.store_id,
-          store_name: vendor.store_name,
-          staffId: staff._id,
-          name: staff.name,
-          phone: staff.phone,
-          email: staff.email,
-          profileImg: staff.profileImg,
-          role: staff.role,
-          message: "Login successful",
+      if (vendor.is_active !== true) {
+        res.status(500).send({
+          message:
+            "Access Denied. This store has been deactivated. For further assistance or information, please contact us at doormutafrica@gmail.com. We will be happy to help.",
         });
       } else {
-        res.status(401).send({
-          message: "Invalid Email or password!",
-        });
+        if (staff && bcrypt.compareSync(req.body.password, staff.password)) {
+          const token = vendorSignInToken(staff, vendor);
+          res.send({
+            token,
+            _id: vendor._id,
+            store_id: vendor.store_id,
+            store_name: vendor.store_name,
+            staffId: staff._id,
+            name: staff.name,
+            phone: staff.phone,
+            email: staff.email,
+            profileImg: staff.profileImg,
+            store_coverImg: vendor.store_coverImg,
+            store_profileImg: vendor.store_profileImg,
+            role: staff.role,
+            message: "Login successful",
+          });
+        } else {
+          res.status(401).send({
+            message: "Invalid Email or password!",
+          });
+        }
       }
     } else {
       res.status(401).send({
@@ -179,7 +190,7 @@ const forgetPassword = async (req, res) => {
     const staff = vendor.staffs.find((staff) => staff.email === verifyEmail);
     if (!staff) {
       return res.status(404).send({
-        message: "Vendor not found with this email!",
+        message: "Staff not found with this email!",
       });
     } else {
       const token = vendorToken(staff, vendor);
@@ -195,7 +206,7 @@ const forgetPassword = async (req, res) => {
         <p>This link will expire in <strong> 15 minute</strong>.</p>
 
         <p style="margin-bottom:20px;">Click this link for reset your password</p>
-        <a href=${process.env.ADMIN_URL}/reset-password/${token}  style="background:#22c55e;color:white;border:1px solid #22c55e; padding: 10px 15px; border-radius: 4px; text-decoration:none;">Reset Password </a>
+        <a href=${process.env.VENDOR_URL}/reset-password/${token} style="background:#22c55e;color:white;border:1px solid #22c55e; padding: 10px 15px; border-radius: 4px; text-decoration:none;">Reset Password </a>
       
         <p style="margin-top: 35px;">If you did not initiate this request, please contact us immediately at support@kachabazar.com</p>
 
@@ -207,6 +218,7 @@ const forgetPassword = async (req, res) => {
       sendEmail(body, res, message);
       res.status(200).send({
         token,
+        message,
       });
     }
   } else {
@@ -315,6 +327,15 @@ const updateVendorAddress = async (req, res) => {
   }
 };
 
+const deleteVendor = async (req, res) => {
+  try {
+    await Vendor.findOneAndRemove({ _id: req.params.id }).exec();
+    res.status(204).send({ message: "Vendor deleted sucessfully" });
+  } catch (error) {
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
 const categorySystem = async (req, res) => {
   const id = req.params.id;
   const category = req.body.category;
@@ -347,7 +368,7 @@ const addStaff = async (req, res) => {
   const phone = req.body.phone;
   const email = req.body.email;
   const role = req.body.role;
-
+  const joiningDate = req.body.joiningDate;
   try {
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
@@ -362,7 +383,7 @@ const addStaff = async (req, res) => {
     ) {
       res.status(500).json({ message: "You can only have one Super Admin" });
     } else {
-      vendor.staffs.push({ name, password, phone, email, role });
+      vendor.staffs.push({ name, password, phone, email, role, joiningDate });
       res.json({ message: "Staff added succesfully" });
       await vendor.save();
       const body = {
@@ -403,6 +424,7 @@ const updateStaff = async (req, res) => {
         "staffs.$.phone": req.body.phone,
         "staffs.$.role": req.body.role,
         "staffs.$.profileImg": req.body.profileImg,
+        "staffs.$.joiningDate": req.body.joiningDate,
       },
     };
     const filter = { _id: req.params.id, "staffs._id": req.params.staffId };
@@ -436,8 +458,6 @@ const deleteStaff = async (req, res) => {
 };
 
 const getAllStaffs = async (req, res) => {
-  console.log(req.user?.role);
-
   try {
     const vendorId = req.params.id;
     const searchQuery = req.query.search;
@@ -660,6 +680,9 @@ const deActivate = async (req, res) => {
 
 const vendorOrders = async (req, res) => {
   try {
+    const vendor = await Vendor.findOne({ store_id: req.params.store_id });
+    const isVendor = req?.user?.is_vendor;
+
     const vendorId = req.params.store_id;
     const id = req.params.id;
     const { search, status, dateRange, recent, day, page, limit, method } =
@@ -1022,7 +1045,7 @@ const vendorOrders = async (req, res) => {
       (item) => item.status === "Pending"
     ).length;
     const processingOrders = vendorOrders.filter(
-      (item) => item.status === "Processing"
+      (item) => item.status === "Processed"
     ).length;
     const canceledOrders = vendorOrders.filter(
       (item) => item.status === "Canceled"
@@ -1047,45 +1070,53 @@ const vendorOrders = async (req, res) => {
 
     const topProducts = sortedBestSellingProducts.slice(0, 4);
 
-    if (id) {
-      const orderId = mongoose.Types.ObjectId(id);
-      const orderData = vendorOrders.filter((order) => {
-        return order._id.equals(orderId);
+    //vendor should not see orders if his/her account has been frozen
+    if (vendor.is_frozen !== false && isVendor === true) {
+      res.status(500).send({
+        message:
+          "Your store is FROZEN. The orders for this store is currently unavailable due to maintenance or other reasons. For more information or to inquire about the status of your account, please contact our support team at doormutafrica@gmail.com. We appreciate your patience and look forward to assisting you",
       });
-      res.send(orderData);
-    } else if (recent) {
-      const recentOrders = vendorOrders
-        .sort((a, b) => b.orderTime - a.orderTime) // sort by createdAt in descending order (newest first)
-        .slice(0, 5); // limit to 5 recent orders
-      res.send(recentOrders);
-    } else if (
-      search ||
-      status ||
-      dateRange ||
-      day ||
-      page ||
-      limit ||
-      method
-    ) {
-      res.send({ filteredVendorOrders });
     } else {
-      res.send({
-        totalOrders,
-        deliveredOrders,
-        pendingOrders,
-        processingOrders,
-        canceledOrders,
-        topProducts,
-        earnings: {
-          total: totalEarnings,
-          today: todayEarnings,
-          yesterday: yesterdayEarnings,
-          weekly: weeklyEarnings,
-          monthly: monthlyEarnings,
-          lastmonth: lastMonthlyEarnings,
-        },
-        vendorOrders,
-      });
+      if (id) {
+        const orderId = mongoose.Types.ObjectId(id);
+        const orderData = vendorOrders.find((order) => {
+          return order._id.equals(orderId);
+        });
+        res.send(orderData);
+      } else if (recent) {
+        const recentOrders = vendorOrders
+          .sort((a, b) => b.orderTime - a.orderTime) // sort by createdAt in descending order (newest first)
+          .slice(0, 5); // limit to 5 recent orders
+        res.send(recentOrders);
+      } else if (
+        search ||
+        status ||
+        dateRange ||
+        day ||
+        page ||
+        limit ||
+        method
+      ) {
+        res.send({ filteredVendorOrders });
+      } else {
+        res.send({
+          totalOrders,
+          deliveredOrders,
+          pendingOrders,
+          processingOrders,
+          canceledOrders,
+          topProducts,
+          earnings: {
+            total: totalEarnings,
+            today: todayEarnings,
+            yesterday: yesterdayEarnings,
+            weekly: weeklyEarnings,
+            monthly: monthlyEarnings,
+            lastmonth: lastMonthlyEarnings,
+          },
+          vendorOrders,
+        });
+      }
     }
   } catch (err) {
     console.log(err);
@@ -1099,6 +1130,7 @@ module.exports = {
   loginVendor,
   updateVendorlogin,
   updateVendorAddress,
+  deleteVendor,
   getAllVendors,
   getVendorsById,
   registerVendor,

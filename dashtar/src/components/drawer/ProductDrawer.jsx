@@ -9,7 +9,7 @@ import {
   Table,
 } from "@windmill/react-ui";
 import Multiselect from "multiselect-react-dropdown";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { MultiSelect } from "react-multi-select-component";
 import { Modal } from "react-responsive-modal";
@@ -46,6 +46,7 @@ const ProductDrawer = ({ id }) => {
     tag,
     setTag,
     values,
+    watch,
     language,
     register,
     onSubmit,
@@ -54,6 +55,7 @@ const ProductDrawer = ({ id }) => {
     openModal,
     attribue,
     setValues,
+    setValue,
     variants,
     imageUrl,
     setImageUrl,
@@ -90,6 +92,18 @@ const ProductDrawer = ({ id }) => {
   } = useProductSubmit(id);
 
   const { currency, showingTranslateValue } = useUtilsFunction();
+
+  const retailPrice = watch("retailPrice");
+  const wholePrice = watch("wholePrice");
+  console.log({ retailPrice, wholePrice });
+  const [priceToggle, setPriceToggle] = useState(false); //false === retatil
+  console.log(priceToggle);
+
+  useEffect(() => {
+    setPriceToggle(
+      retailPrice !== undefined && wholePrice !== undefined ? true : false
+    ); //value intelligence
+  }, [retailPrice]);
 
   return (
     <>
@@ -131,11 +145,11 @@ const ProductDrawer = ({ id }) => {
       </div>
 
       <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-700">
-        <SwitchToggleForCombination
+        {/*----    <SwitchToggleForCombination
           product
           handleProcess={handleIsCombination}
           processOption={isCombination}
-        />
+        />---*/}
 
         <ul className="flex flex-wrap -mb-px">
           <li className="mr-2">
@@ -209,7 +223,7 @@ const ProductDrawer = ({ id }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+              {/* <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label={t("ProductSKU")} />
                 <div className="col-span-8 sm:col-span-4">
                   <InputArea
@@ -222,9 +236,9 @@ const ProductDrawer = ({ id }) => {
                   />
                   <Error errorName={errors.sku} />
                 </div>
-              </div>
+              </div> */}
 
-              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+              {/* <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label={t("ProductBarcode")} />
                 <div className="col-span-8 sm:col-span-4">
                   <InputArea
@@ -237,7 +251,7 @@ const ProductDrawer = ({ id }) => {
                   />
                   <Error errorName={errors.barcode} />
                 </div>
-              </div>
+              </div> */}
 
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label={t("Category")} />
@@ -247,6 +261,7 @@ const ProductDrawer = ({ id }) => {
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
                     setDefaultCategory={setDefaultCategory}
+                    defaultCategory={defaultCategory}
                   />
                 </div>
               </div>
@@ -271,29 +286,29 @@ const ProductDrawer = ({ id }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                <LabelArea label="Product Price" />
+              {/* <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label="Whole Price" />
                 <div className="col-span-8 sm:col-span-4">
                   <InputValue
                     disabled={isCombination}
                     register={register}
-                    maxValue={2000}
+                    // maxValue={2000}
                     minValue={1}
-                    label="Original Price"
-                    name="originalPrice"
+                    label="Whole Price"
+                    name="wholePrice"
                     type="number"
-                    placeholder="OriginalPrice"
+                    placeholder="Whole Price"
                     defaultValue={0.0}
                     required="false"
                     product
                     currency={currency}
                   />
-                  <Error errorName={errors.originalPrice} />
+                  <Error errorName={errors.wholePrice} />
                 </div>
               </div>
 
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                <LabelArea label={t("SalePrice")} />
+                <LabelArea label="Retail Price" />
                 <div className="col-span-8 sm:col-span-4">
                   <InputValue
                     disabled={isCombination}
@@ -302,15 +317,15 @@ const ProductDrawer = ({ id }) => {
                     minValue={0}
                     defaultValue={0.0}
                     required="false"
-                    label="Sale price"
-                    name="price"
+                    label="Retail price"
+                    name="retailPrice"
                     type="number"
-                    placeholder="Sale price"
+                    placeholder="Retail price"
                     currency={currency}
                   />
-                  <Error errorName={errors.price} />
+                  <Error errorName={errors.retailPrice} />
                 </div>
-              </div>
+              </div> */}
 
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6 relative">
                 <LabelArea label={t("ProductQuantity")} />
@@ -355,6 +370,65 @@ const ProductDrawer = ({ id }) => {
                     tags={tag}
                     onChange={(newTags) => setTag(newTags)}
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <span className="font-black">Product Pricing</span>
+              </div>
+
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label={"Publish"} />
+                <div className=" col-span-8 sm:col-span-4 flex items-center gap-4">
+                  <div className="flex items-center gap-1">
+                    <input
+                      className="checkbox"
+                      type="checkbox"
+                      checked={priceToggle === false ? true : false}
+                      onClick={() => {
+                        setPriceToggle(false), setValue("wholePrice");
+                      }}
+                    />
+                    <label>Single Type</label>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <input
+                      className="checkbox"
+                      type="checkbox"
+                      checked={priceToggle === true ? true : false}
+                      onClick={() => setPriceToggle(true)}
+                    />
+                    <label>Wholesale and Single</label>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label={"Product Price(NGN)"} />
+                <div className="col-span-8 sm:col-span-4 flex items-center gap-4 flex-wrap">
+                  <input
+                    type="number"
+                    // defaultValue={0.0}
+                    className="input input-bordered bg-transparent"
+                    placeholder="Retail Price"
+                    {...register("retailPrice", {
+                      required: priceToggle === true ? true : false,
+                    })}
+                  />
+                  <Error errorName={errors.retailPrice} />
+
+                  {priceToggle && (
+                    <>
+                      <input
+                        type="number"
+                        className="input input-bordered bg-transparent"
+                        placeholder="Wholesale Price"
+                        {...register("wholePrice", {
+                          required: priceToggle === true ? true : false,
+                        })}
+                      />
+                      <Error errorName={errors.wholePrice} />
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,12 +1,13 @@
 import combinate from "combinate";
 import { useContext, useEffect, useRef, useState } from "react";
+import { SidebarContext } from "@/context/SidebarContext";
+
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import swal from "sweetalert";
 
 //internal import
 import useAsync from "@/hooks/useAsync";
-import { SidebarContext } from "@/context/SidebarContext";
 import AttributeServices from "@/services/AttributeServices";
 import ProductServices from "@/services/ProductServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
@@ -18,9 +19,6 @@ const useProductSubmit = (id) => {
   const location = useLocation();
   const { isDrawerOpen, closeDrawer, setIsUpdate, lang } =
     useContext(SidebarContext);
-
-  const { state } = useContext(AdminContext);
-  const { userInfo } = state;
 
   const { data: attribue } = useAsync(AttributeServices.getShowingAttributes);
 
@@ -61,6 +59,8 @@ const useProductSubmit = (id) => {
 
   // const { handlerTextTranslateHandler } = useTranslationValue();
   const { showingTranslateValue, getNumber, getNumberTwo } = useUtilsFunction();
+  const { state } = useContext(AdminContext);
+  const { userInfo } = state;
 
   // console.log("lang", lang);
 
@@ -78,6 +78,7 @@ const useProductSubmit = (id) => {
     handleSubmit,
     setValue,
     clearErrors,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -146,17 +147,18 @@ const useProductSubmit = (id) => {
         slug: data.slug
           ? data.slug
           : data.title.toLowerCase().replace(/[^A-Z0-9]+/gi, "-"),
-        store_id: userInfo.store_id,
+
         categories: selectedCategory.map((item) => item._id),
         category: defaultCategory[0]._id,
-
+        store_id: userInfo.store_id,
         image: imageUrl,
         stock: variants?.length < 1 ? data.stock : Number(totalStock),
         tag: JSON.stringify(tag),
 
         prices: {
-          price: getNumber(data.price),
-          originalPrice: getNumberTwo(data.originalPrice),
+          wholesalePrice:data.wholePrice,
+          retailPrice: data.retailPrice,
+          // retailPrice: getNumberTwo(data.retailPrice),
           discount: Number(data.originalPrice) - Number(data.price),
         },
         isCombination: updatedVariants?.length > 0 ? isCombination : false,
@@ -264,6 +266,8 @@ const useProductSubmit = (id) => {
       setValue("stock");
       setValue("originalPrice");
       setValue("price");
+      setValue("wholePrice");
+      setValue("retailPrice");
       setValue("barcode");
       setValue("productId");
 
@@ -287,10 +291,10 @@ const useProductSubmit = (id) => {
       clearErrors("description");
       clearErrors("stock");
       clearErrors("quantity");
-      setValue("stock", 0);
-      setValue("costPrice", 0);
-      setValue("price", 0);
-      setValue("originalPrice", 0);
+      // setValue("stock", 0);
+      // setValue("costPrice", 0);
+      // setValue("price", 0);
+      // setValue("originalPrice", 0);
       clearErrors("show");
       clearErrors("barcode");
       setIsCombination(false);
@@ -327,23 +331,31 @@ const useProductSubmit = (id) => {
             setValue("barcode", res.barcode);
             setValue("stock", res.stock);
             setValue("productId", res.productId);
-            setValue("price", res?.prices?.price);
-            setValue("originalPrice", res?.prices?.originalPrice);
+            setValue("wholePrice", res?.prices?.wholesalePrice);
+            setValue("retailPrice", res?.prices?.retailPrice);
             setValue("stock", res.stock);
             setProductId(res.productId ? res.productId : res._id);
             setBarcode(res.barcode);
             setSku(res.sku);
 
             res.categories.map((category) => {
-              category.name = showingTranslateValue(category?.name, lang);
+              category.name = category?.name;
 
               return category;
             });
 
-            res.category.name = showingTranslateValue(
-              res?.category?.name,
-              lang
-            );
+            (res.category.name = res?.category?.name), lang;
+
+            // res.categories.map((category) => {
+            //   category.name = showingTranslateValue(category?.name, lang);
+
+            //   return category;
+            // });
+
+            // res.category.name = showingTranslateValue(
+            //   res?.category?.name,
+            //   lang
+            // );
 
             setSelectedCategory(res.categories);
             setDefaultCategory([res?.category]);
@@ -596,22 +608,24 @@ const useProductSubmit = (id) => {
     //   "variant",
     //   variant
     // );
-    if (name === "originalPrice" && Number(value) < Number(variant.price)) {
-      // variants[id][name] = Number(variant.originalPrice);
-      notifyError("Price must be more then or equal of originalPrice!");
-      setValue("originalPrice", variant.originalPrice);
-      setIsBulkUpdate(true);
-      const timeOutId = setTimeout(() => setIsBulkUpdate(false), 100);
-      return () => clearTimeout(timeOutId);
-    }
-    if (name === "price" && Number(variant.originalPrice) < Number(value)) {
-      // variants[id][name] = Number(variant.originalPrice);
-      notifyError("Sale Price must be less then or equal of product price!");
-      setValue("price", variant.originalPrice);
-      setIsBulkUpdate(true);
-      const timeOutId = setTimeout(() => setIsBulkUpdate(false), 100);
-      return () => clearTimeout(timeOutId);
-    }
+
+    //commented by wizicodes✌
+    // if (name === "originalPrice" && Number(value) < Number(variant.price)) {
+    //   // variants[id][name] = Number(variant.originalPrice);
+    //   notifyError("Price must be more then or equal of originalPrice!");
+    //   setValue("originalPrice", variant.originalPrice);
+    //   setIsBulkUpdate(true);
+    //   const timeOutId = setTimeout(() => setIsBulkUpdate(false), 100);
+    //   return () => clearTimeout(timeOutId);
+    // }
+    // if (name === "price" && Number(variant.originalPrice) < Number(value)) {
+    //   // variants[id][name] = Number(variant.originalPrice);
+    //   notifyError("Sale Price must be less then or equal of product price!");
+    //   setValue("price", variant.originalPrice);
+    //   setIsBulkUpdate(true);
+    //   const timeOutId = setTimeout(() => setIsBulkUpdate(false), 100);
+    //   return () => clearTimeout(timeOutId);
+    // }
     setVariants((pre) =>
       pre.map((com, i) => {
         if (i === id) {
@@ -661,6 +675,7 @@ const useProductSubmit = (id) => {
     tag,
     setTag,
     values,
+    watch,
     language,
     register,
     onSubmit,
@@ -669,6 +684,7 @@ const useProductSubmit = (id) => {
     openModal,
     attribue,
     setValues,
+    setValue,
     variants,
     imageUrl,
     setImageUrl,

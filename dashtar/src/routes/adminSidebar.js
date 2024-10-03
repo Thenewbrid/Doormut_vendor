@@ -61,40 +61,40 @@ const admin = [
     icon: FiSettings,
     name: "Settings",
   },
-  {
-    icon: FiGlobe,
-    name: "International",
-    routes: [
-      {
-        path: "/languages",
-        name: "Languages",
-      },
-      {
-        path: "/currencies",
-        name: "Currencies",
-      },
-    ],
-  },
-  {
-    icon: FiTarget,
-    name: "OnlineStore",
-    routes: [
-      // {
-      //   name: "ViewStore",
-      //   path: "http://localhost:3000",
-      //   outside: "store",
-      // },
+  // {
+  //   icon: FiGlobe,
+  //   name: "International",
+  //   routes: [
+  //     {
+  //       path: "/languages",
+  //       name: "Languages",
+  //     },
+  //     {
+  //       path: "/currencies",
+  //       name: "Currencies",
+  //     },
+  //   ],
+  // },
+  // {
+  //   icon: FiTarget,
+  //   name: "OnlineStore",
+  //   routes: [
+  //     // {
+  //     //   name: "ViewStore",
+  //     //   path: "http://localhost:3000",
+  //     //   outside: "store",
+  //     // },
 
-      {
-        path: "/store/customization",
-        name: "StoreCustomization",
-      },
-      {
-        path: "/store/store-settings",
-        name: "StoreSettings",
-      },
-    ],
-  },
+  //     {
+  //       path: "/store/customization",
+  //       name: "StoreCustomization",
+  //     },
+  //     {
+  //       path: "/store/store-settings",
+  //       name: "StoreSettings",
+  //     },
+  //   ],
+  // },
 
   // {
   //   icon: FiSlack,

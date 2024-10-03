@@ -48,6 +48,17 @@ const ForgotPassword = () => {
                   placeholder="john@doe.com"
                 />
                 <Error errorName={errors.verifyEmail} />
+                <div className="mt-3">
+                  <LabelArea label="Store Id" />
+                  <InputArea
+                    register={register}
+                    label="store_id"
+                    name="store_id"
+                    type="text"
+                    placeholder="MTMT_150"
+                  />
+                  <Error errorName={errors.store_id} />
+                </div>
 
                 <Button
                   disabled={loading}

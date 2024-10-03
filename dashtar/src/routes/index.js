@@ -93,19 +93,19 @@ const routes = [
     path: "/order/:id",
     component: OrderInvoice,
   },
-  {
-    path: "/coupons",
-    component: Coupons,
-  },
+  // {
+  //   path: "/coupons",
+  //   component: Coupons,
+  // },
   { path: "/settings", component: Setting },
-  {
-    path: "/store/customization",
-    component: StoreHome,
-  },
-  {
-    path: "/store/store-settings",
-    component: StoreSetting,
-  },
+  // {
+  //   path: "/store/customization",
+  //   component: StoreHome,
+  // },
+  // {
+  //   path: "/store/store-settings",
+  //   component: StoreSetting,
+  // },
   {
     path: "/404",
     component: Page404,

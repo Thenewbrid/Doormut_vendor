@@ -81,13 +81,13 @@ const EditProfile = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+            {/* <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
               <LabelArea label={t("ProfileYourRole")} />
               <div className="col-span-8 sm:col-span-4">
                 <SelectRole register={register} label="Role" name="role" />
                 <Error errorName={errors.role} />
               </div>
-            </div>
+            </div> */}
 
             <div className="flex items-start flex-col gap-5 md:flex-row md:gap-28 xl:gap-60 justify-between mb-6 pt-5 w-full">
               <div className="flex items-center justify-center gap-5 w-60 text-left">

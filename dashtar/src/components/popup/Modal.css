@@ -12,7 +12,7 @@
   z-index: 99;
 }
 
-.modal {
+.modal-a {
   display: flex;
   align-items: start;
   justify-content: start;
@@ -65,7 +65,7 @@ flex-direction: row;
 gap: 3px;
 }
 
-.toggle{
+.toggler{
 background-color: rgb(196, 194, 194);
 height: 24px;
 width: 50px;

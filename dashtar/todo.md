@@ -27,3 +27,6 @@ childcategory
 useCategorySubmit
 usebulkaction submit
 bulk action drawer
+
+
+problem with product detils page--admin

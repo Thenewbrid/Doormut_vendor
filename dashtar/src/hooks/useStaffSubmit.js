@@ -53,6 +53,9 @@ const useStaffSubmit = (id) => {
         phone: data.phone,
         role: data.role,
         profileImg: imageUrl,
+        joiningDate: selectedDate
+          ? selectedDate
+          : dayjs(new Date()).format("YYYY-MM-DD"),
         // image: imageUrl,
         // lang: language,
       };
@@ -79,7 +82,7 @@ const useStaffSubmit = (id) => {
       }
     } catch (err) {
       notifyError(err ? err?.response?.data?.message : err?.message);
-      console.log(err)
+      console.log(err);
       setIsSubmitting(false);
       closeDrawer();
     }
@@ -98,9 +101,9 @@ const useStaffSubmit = (id) => {
         setSelectedDate(dayjs(res.createdAt).format("YYYY-MM-DD"));
         setImageUrl(res.profileImg);
       }
-      console.log(res)
+      console.log(res);
     } catch (err) {
-      console.log(err)
+      console.log(err);
       notifyError(err ? err?.response?.data?.message : err?.message);
     }
   };

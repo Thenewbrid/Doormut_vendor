@@ -86,26 +86,27 @@ const ProductTable = ({ products, isCheck, setIsCheck }) => {
             </TableCell>
 
             <TableCell>
-              <span className="text-sm">
-                {showingTranslateValue(product?.category?.name)}
-              </span>
+              <span className="text-sm">{product?.category?.name}</span>
             </TableCell>
 
             <TableCell>
               <span className="text-sm font-semibold">
                 {currency}
-                {product?.isCombination
+                {product?.prices?.retailPrice}
+
+                {/* {product?.isCombination
                   ? getNumberTwo(product?.variants[0]?.originalPrice)
-                  : getNumberTwo(product?.prices?.originalPrice)}
+                  : getNumberTwo(product?.prices?.originalPrice)} */}
               </span>
             </TableCell>
 
             <TableCell>
               <span className="text-sm font-semibold">
                 {currency}
-                {product?.isCombination
+                {product?.prices?.wholesalePrice}
+                {/* {product?.isCombination
                   ? getNumberTwo(product?.variants[0]?.price)
-                  : getNumberTwo(product?.prices?.price)}
+                  : getNumberTwo(product?.prices?.price)} */}
               </span>
             </TableCell>
 

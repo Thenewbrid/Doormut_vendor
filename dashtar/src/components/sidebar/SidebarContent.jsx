@@ -13,6 +13,7 @@ import logoLight from "@/assets/img/logo/logo-light.png";
 import logoDark from "@/assets/img/logo/logo-dark.svg";
 import SidebarSubMenu from "@/components/sidebar/SidebarSubMenu";
 import { AdminContext } from "@/context/AdminContext";
+import doormutLogo from "@/assets/img/logo/doormut.png";
 
 const SidebarContent = ({ handleLogout }) => {
   const { t } = useTranslation();
@@ -35,9 +36,19 @@ const SidebarContent = ({ handleLogout }) => {
     <div className="py-4 text-gray-500 dark:text-gray-400">
       <a className=" text-gray-900 dark:text-gray-200" href="/dashboard">
         {mode === "dark" ? (
-          <img src={logoLight} alt="kachabazar" width="135" className="pl-6" />
+          <img
+            src={doormutLogo}
+            alt="kachabazar"
+            width="160"
+            className="pl-1  -mb-4 -mt-3"
+          />
         ) : (
-          <img src={logoDark} alt="kachabazar" width="135" className="pl-6" />
+          <img
+            src={doormutLogo}
+            alt="kachabazar"
+            width="160"
+            className="pl-1  -mb-4 -mt-3"
+          />
         )}
       </a>
       {/* DASHBOARD CONTENT FOR ADMIN */}

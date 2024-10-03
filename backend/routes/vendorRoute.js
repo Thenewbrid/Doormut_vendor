@@ -8,6 +8,7 @@ const {
   loginVendor,
   updateVendorlogin,
   updateVendorAddress,
+  deleteVendor,
   forgetPassword,
   resetPassword,
   ratingSystem,
@@ -31,12 +32,11 @@ const { isAuth, isAdmin } = require("../config/auth");
 
 //register a vendor
 router.get("/", getAllVendors);
-router.get("/orders/:store_id/:id?", vendorOrders);
+router.get("/orders/:store_id/:id?", isAuth, vendorOrders);
 router.get("/:id", getVendorsById);
 router.get("/store/:store_id", getVendorsByStoreId);
 router.get("/staffs/:id", isAuth, getAllStaffs);
 router.get("/staffs/:id/:staffId", findStaffById);
-
 
 //register a vendor
 router.post("/register", registerVendor);
@@ -63,9 +63,8 @@ router.put("/:store_id/de-activavte", deActivate);
 router.put("/:store_id/verify", verify);
 router.put("/:store_id/unverify", unverify);
 
-
 // /delete
+router.delete("/:id", deleteVendor);
 router.delete("/staffs/:id/:staffId", deleteStaff);
-
 
 module.exports = router;

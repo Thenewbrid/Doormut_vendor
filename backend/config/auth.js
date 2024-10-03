@@ -31,6 +31,7 @@ const vendorSignInToken = (staff, vendor) => {
       name: staff.name,
       email: staff.email,
       role: staff.role,
+      is_vendor: true
     },
     process.env.JWT_SECRET,
     { expiresIn: "2d" }

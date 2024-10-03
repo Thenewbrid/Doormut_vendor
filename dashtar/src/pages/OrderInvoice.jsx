@@ -28,6 +28,10 @@ import InvoiceForDownload from "@/components/invoice/InvoiceForDownload";
 import SelectStatus from "@/components/form/selectOption/SelectStatus";
 import useFilter from "@/hooks/useFilter";
 import VendorServices from "@/services/VendorServices";
+import { ArrowLeft2, ArrowLeft } from "iconsax-react";
+import { AdminContext } from "@/context/AdminContext";
+import { useHistory } from "react-router-dom";
+import doormutLogo from "@/assets/img/logo/doormut.png";
 
 const OrderInvoice = ({ orders }) => {
   const { t } = useTranslation();
@@ -35,13 +39,21 @@ const OrderInvoice = ({ orders }) => {
   const { id } = useParams();
   const printRef = useRef();
 
+  const { state, dispatch } = useContext(AdminContext);
+  const { userInfo } = state;
   //  const { dataTable } = useFilter(dashboardRecentOrder?.orders);
 
   const { data, loading, error } = useAsync(() =>
-    VendorServices.getVendorOrders("MTMT_150", id)
+    VendorServices.getVendorOrders(userInfo.store_id, id)
   );
 
-  console.log(data[0]?.invoice);
+  const history = useHistory();
+
+  const handleBackIconClick = () => {
+    history.goBack();
+  };
+
+  console.log(data?.invoice);
   const {
     currency,
     globalSetting,
@@ -52,6 +64,19 @@ const OrderInvoice = ({ orders }) => {
 
   return (
     <>
+      <div className="flex items-center justify-between mt-6 mb-4 dark:bg-gray-800 bg-white shadow-md w-full h-[3rem] rounded-xl p-4">
+        <div className="flex items-center h-full btn btn-ghost hover:bg-transparent cursor-pointer">
+          <ArrowLeft
+            onClick={handleBackIconClick}
+            className="mr-2 font-bold text-gray-400"
+          />{" "}
+          <span className="font-bold text-gray-400">Back</span>
+        </div>
+        <div className="flex items-center h-full font-bold text-gray-400">
+          Order Details
+        </div>
+      </div>
+
       <PageTitle> {t("InvoicePageTittle")} </PageTitle>
 
       <div
@@ -80,7 +105,7 @@ const OrderInvoice = ({ orders }) => {
                     {t("InvoiceNo")}
                   </span>
                   <span className="text-sm text-gray-500 dark:text-gray-400 block">
-                    #{data[0]?.invoice}
+                    #{data?.invoice}
                   </span>
                 </div>
                 {/* SATATUS */}
@@ -88,16 +113,26 @@ const OrderInvoice = ({ orders }) => {
                   {t("InvoiceStatus")}
                   <span className="pl-2 font-medium text-xs capitalize">
                     {" "}
-                    <Status status={data[0].status} />
+                    <Status status={data.status} />
                   </span>
                 </p>
               </div>
               {/* <div className="lg:text-right text-left">
                 <h2 className="lg:flex lg:justify-end text-lg font-serif font-semibold mt-4 lg:mt-0 lg:ml-0 md:mt-0">
-                  {mode === "dark" ? (
-                    <img src={logoDark} alt="kachabazar" width="110" />
+                 {mode === "dark" ? (
+                    <img
+                      src={doormutLogo}
+                      alt="kachabazar"
+                      width="120"
+                      className="pl-1 "
+                    />
                   ) : (
-                    <img src={logoLight} alt="kachabazar" width="110" />
+                    <img
+                      src={doormutLogo}
+                      alt="kachabazar"
+                      width="120"
+                      className="pl-1 "
+                    />
                   )}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
@@ -133,21 +168,21 @@ const OrderInvoice = ({ orders }) => {
                 </span>
                 <span className="text-sm text-gray-500 text-left dark:text-gray-400 block">
                   <span className="font-extrabold"> Name: </span>{" "}
-                  {data[0]?.userId?.name} <br />
+                  {data?.userId?.name} <br />
                   <span className="font-extrabold"> Eamil: </span>{" "}
-                  {data[0]?.userId?.email} <br />
+                  {data?.userId?.email} <br />
                   <span className="font-extrabold"> Number: </span>{" "}
-                  <span className="ml-2">{data[0]?.userId?.contact}</span>
+                  <span className="ml-2">{data?.userId?.contact}</span>
                   <br />
                   <span className="font-extrabold"> Country: </span>{" "}
-                  {data[0]?.userId?.address?.substring(0, 30)}
+                  {data?.userId?.address?.substring(0, 30)}
                   <br />
                   <span className="font-extrabold">
                     {" "}
                     City/Country/ZipCode:{" "}
                   </span>{" "}
-                  {data[0]?.userId?.city}, {data[0]?.userId?.country},{" "}
-                  {data[0]?.userId?.zipCode}
+                  {data?.userId?.city}, {data?.userId?.country},{" "}
+                  {data?.userId?.zipCode}
                 </span>
               </div>
               {/* END OF CUSTOMER DETAILS */}
@@ -157,9 +192,19 @@ const OrderInvoice = ({ orders }) => {
                 <div className="px-2 py-8 rounded-[20px] bg-gray-200 dark:bg-slate-500">
                   <h2 className="lg:flex lg:justify-end text-lg font-serif font-semibold mt-4 lg:mt-0 lg:ml-0 md:mt-0">
                     {mode === "dark" ? (
-                      <img src={logoDark} alt="kachabazar" width="70" />
+                      <img
+                        src={doormutLogo}
+                        alt="kachabazar"
+                        width="80"
+                        className="pl-1 "
+                      />
                     ) : (
-                      <img src={logoLight} alt="kachabazar" width="70" />
+                      <img
+                        src={doormutLogo}
+                        alt="kachabazar"
+                        width="80"
+                        className="pl-1 "
+                      />
                     )}
                   </h2>
                 </div>
@@ -220,7 +265,7 @@ const OrderInvoice = ({ orders }) => {
                   {t("InvoicepaymentMethod")}
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold font-serif block">
-                  {data[0].paymentMethod}
+                  {data.paymentMethod}
                 </span>
               </div>
               {/* <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
@@ -229,7 +274,7 @@ const OrderInvoice = ({ orders }) => {
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold font-serif block">
                   {currency}
-                  {getNumberTwo(data[0]?.shippingCost / data[0]?.cartNo)}
+                  {getNumberTwo(data?.shippingCost / data?.cartNo)}
                 </span>
               </div> */}
               {/* <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
@@ -238,7 +283,7 @@ const OrderInvoice = ({ orders }) => {
                 </span>
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-semibold font-serif block">
                   {currency}
-                  {getNumberTwo(data[0].discount)}
+                  {getNumberTwo(data.discount)}
                 </span>
               </div> */}
               <div className="flex flex-col sm:flex-wrap">
@@ -247,7 +292,7 @@ const OrderInvoice = ({ orders }) => {
                 </span>
                 <span className="text-xl font-serif font-bold text-red-500 dark:text-emerald-500 block">
                   {currency}
-                  {getNumberTwo(data[0]?.totalAmount)}
+                  {getNumberTwo(data?.totalAmount)}
                 </span>
               </div>
             </div>

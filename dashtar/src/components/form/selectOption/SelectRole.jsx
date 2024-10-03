@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Select } from "@windmill/react-ui";
+import { AdminContext } from "@/context/AdminContext";
 
 const SelectRole = ({ setRole, register, name, label }) => {
-  
+  const { state, dispatch } = useContext(AdminContext);
+  const { userInfo } = state;
   return (
     <>
       <Select
@@ -11,13 +13,12 @@ const SelectRole = ({ setRole, register, name, label }) => {
         {...register(`${name}`, {
           required: `${label} is required!`,
         })}
-       
       >
         <option value="" defaultValue hidden>
           Staff role
         </option>
         <option value="Admin">Admin</option>
-        {/* <option value="Super Admin">Super Admin</option> */}
+        <option value="Super Admin">Super Admin</option>
         {/* <option value="CEO">CEO</option> */}
         <option value="Manager">Inventory Manager</option>
         <option value="Cashier">Cashier</option>

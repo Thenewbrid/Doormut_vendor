@@ -162,7 +162,7 @@ const Orders = () => {
                   </option>
                   <option value="Delivered">{t("PageOrderDelivered")}</option>
                   <option value="Pending">{t("PageOrderPending")}</option>
-                  <option value="Processing">{t("PageOrderProcessing")}</option>
+                  <option value="Processed">Processed</option>
                   <option value="Cancel">{t("OrderCancel")}</option>
                 </Select>
               </div>
@@ -299,7 +299,7 @@ const Orders = () => {
                 <TableCell>{t("CustomerName")}</TableCell>
                 <TableCell>{t("MethodTbl")}</TableCell>
                 <TableCell>{t("AmountTbl")}</TableCell>
-                {/* <TableCell>{t("OderStatusTbl")}</TableCell> */}
+                <TableCell>{t("OderStatusTbl")}</TableCell>
                 <TableCell>{t("ActionTbl")}</TableCell>
                 <TableCell className="text-right">{t("InvoiceTbl")}</TableCell>
               </tr>

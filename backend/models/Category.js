@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const categorySchema = new mongoose.Schema(
   {
     name: {
-      type: Object,
+      type: String,
       required: true,
     },
     description: {
@@ -14,22 +14,29 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    store_ids: [
+    // store_ids: [
+    //   {
+    //     type: String,
+    //     required: false,
+    //   },
+    // ],
+    storeType: [
       {
         type: String,
         required: false,
+        enum: [
+          "Supermarket",
+          "Butchery",
+          "Fruits and Vegetables",
+          "Drinks and Liquor",
+          "Pastery",
+          "Cosmetics"
+        ],
       },
     ],
-    storeType: {
+    type: {
       type: String,
       required: false,
-      enum: [
-        "Supermarket",
-        "Butchery",
-        "Fruits and Vegetables",
-        "Drinks and Liquor",
-        "Pastery",
-      ],
     },
     parentId: {
       type: String,
@@ -53,6 +60,12 @@ const categorySchema = new mongoose.Schema(
       enum: ["show", "hide"],
       default: "show",
     },
+
+    //item delete in bulk function if this is true
+    delete: {
+      type: Boolean,
+      required: false
+    }
   },
   {
     timestamps: true,
@@ -61,5 +74,5 @@ const categorySchema = new mongoose.Schema(
 
 // module.exports = categorySchema;
 
-const Category = mongoose.model("Category", categorySchema);
+const Category = mongoose.model("W-Category", categorySchema);
 module.exports = Category;

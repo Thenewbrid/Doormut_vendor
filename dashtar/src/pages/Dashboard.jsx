@@ -32,6 +32,7 @@ import { SidebarContext } from "@/context/SidebarContext";
 import OrderServices from "@/services/OrderServices";
 import VendorServices from "@/services/VendorServices";
 import { AdminContext } from "@/context/AdminContext";
+import Banner from "@/components/profile-banner/Banner";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -77,6 +78,7 @@ const Dashboard = () => {
   // console.log("dashboardOrderCount", dashboardOrderCount);
 
   const { dataTable, serviceData } = useFilter(dashboardRecentOrder?.orders);
+  console.log(serviceData);
 
   useEffect(() => {
     // today orders show
@@ -247,19 +249,21 @@ const Dashboard = () => {
     error: orderError,
   } = useAsync(() => VendorServices.getVendorOrders(userInfo.store_id));
 
+  // for recent orders👇
   const {
     data: recentOrders,
     loading: loadre,
-    error: loaderr,
+    error: orderErr,
   } = useAsync(() =>
     VendorServices.getVendorOrders(userInfo.store_id, undefined, true)
   );
 
   return (
     <>
+      <Banner />
       <PageTitle>{t("DashboardOverview")}</PageTitle>
 
-      <div className="grid gap-2 mb-8 xl:grid-cols-5 md:grid-cols-2">
+      <div className="grid gap-2 mb-8 xl:grid-cols-5 md:grid-cols-2 pb-20">
         <CardItemTwo
           mode={mode}
           title="Today Order"
@@ -331,7 +335,7 @@ const Dashboard = () => {
           className="text-blue-600 dark:text-blue-100 bg-blue-100 dark:bg-blue-500"
         />
         <CardItem
-          title={t("OrderProcessing")}
+          title={"Orders Processed"}
           Icon={FiTruck}
           loading={loadingOrderCount}
           quantity={orderData?.processingOrders || 0}
@@ -369,10 +373,10 @@ const Dashboard = () => {
       {/* <Loading loading={loading} /> */}
 
       {loadingRecentOrder ? (
-        <TableLoading row={5} col={4} />
-      ) : error ? (
-        <span className="text-center mx-auto text-red-500">{error}</span>
-      ) : serviceData?.length !== 0 ? (
+        <TableLoading row={12} col={8} width={160} height={20} />
+      ) : orderErr ? (
+        <span className="text-center mx-auto text-red-500 text-[0.9rem] pb-4">{orderErr}</span>
+      ) : recentOrders?.length !== 0 ? (
         <TableContainer className="mb-8">
           <Table>
             <TableHeader>
@@ -382,7 +386,7 @@ const Dashboard = () => {
                 <TableCell>{t("CustomerName")} </TableCell>
                 <TableCell> {t("MethodTbl")} </TableCell>
                 <TableCell> {t("AmountTbl")} </TableCell>
-                {/* // <TableCell>{t("OderStatusTbl")}</TableCell> */}
+                <TableCell>{t("OderStatusTbl")}</TableCell>
                 <TableCell>{t("ActionTbl")}</TableCell>
                 <TableCell className="text-right">{t("InvoiceTbl")}</TableCell>
               </tr>

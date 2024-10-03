@@ -24,6 +24,8 @@ import ProductDrawer from "@/components/drawer/ProductDrawer";
 import Loading from "@/components/preloader/Loading";
 import PageTitle from "@/components/Typography/PageTitle";
 import { SidebarContext } from "@/context/SidebarContext";
+import { useHistory } from "react-router-dom";
+import { ArrowLeft } from "iconsax-react";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -55,9 +57,26 @@ const ProductDetails = () => {
   }, [attribue, data?.variants, loading, lang]);
 
   console.log("product", data);
+  const history = useHistory();
 
+  const handleBackIconClick = () => {
+    history.goBack();
+  };
   return (
     <>
+      <div className="flex items-center justify-between my-6 dark:bg-gray-800 bg-white shadow-md w-full h-[3rem] rounded-xl p-4">
+        <div className="flex items-center h-full btn btn-ghost hover:bg-transparent">
+          <ArrowLeft
+            onClick={handleBackIconClick}
+            className="mr-2 font-bold text-gray-400"
+          />{" "}
+          <span className="font-bold text-gray-400">Back</span>
+        </div>
+        <div className="flex items-center h-full font-bold text-gray-400">
+          Product Details
+        </div>
+      </div>
+
       <MainDrawer product>
         <ProductDrawer id={id} />
       </MainDrawer>
@@ -108,13 +127,13 @@ const ProductDetails = () => {
               <div className="font-serif product-price font-bold dark:text-gray-400">
                 <span className="inline-block text-2xl">
                   {currency}
-                  {getNumberTwo(data?.prices?.price)}
-                  {data?.prices?.discount >= 1 && (
+                  {getNumberTwo(data?.prices?.wholesalePrice)}
+                  {/* {data?.prices?.discount >= 1 && (
                     <del className="text-gray-400 dark:text-gray-500 text-lg pl-2">
                       {currency}
                       {getNumberTwo(data?.prices?.originalPrice)}
                     </del>
-                  )}
+                  )} */}
                 </span>
               </div>
               <div className="mb-3">
@@ -140,7 +159,7 @@ const ProductDetails = () => {
                   <span className="text-gray-700 dark:text-gray-400">
                     {t("Category")}:{" "}
                   </span>{" "}
-                  {showingTranslateValue(data?.category?.name)}
+                  {data?.category?.name}
                 </p>
                 <div className="flex flex-row">
                   {JSON.parse(data?.tag).map((t, i) => (

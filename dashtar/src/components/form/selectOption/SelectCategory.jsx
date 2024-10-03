@@ -22,7 +22,7 @@ const SelectCategory = ({ setCategory }) => {
         </option>
         {data?.map((cat) => (
           <option key={cat._id} value={cat._id}>
-            {showingTranslateValue(cat?.name)}
+            {cat?.name}
           </option>
         ))}
       </Select>

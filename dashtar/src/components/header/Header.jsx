@@ -176,7 +176,7 @@ const Header = ({ handleLogout }) => {
 
           <ul className="flex justify-end items-center flex-shrink-0 space-x-6">
             <li className="changeLanguage">
-              <div className="dropdown">
+              <div className="dropdown-d">
                 <button className="dropbtn focus:outline-none">
                   {currentLanguageCode === "de" ? (
                     <img src={de} width={16} alt="lang" className="mx-2" />
@@ -194,7 +194,7 @@ const Header = ({ handleLogout }) => {
                   )}
                 </button>
 
-                <div className="dropdown-content">
+                <div className="dropdown-d-content">
                   <div
                     onClick={() => handleLanguageChange("en")}
                     className="focus:outline-none cursor-pointer"

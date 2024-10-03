@@ -13,21 +13,38 @@ import ImageDark from "@/assets/img/login-office-dark.jpeg";
 import useLoginSubmit from "@/hooks/useLoginSubmit";
 import CMButton from "@/components/form/button/CMButton";
 import { ModalContext } from "@/context/ModalContext";
+import AuthModal from "@/components/authMessageModal/AuthModal";
 
 const Login = () => {
   const { t } = useTranslation();
-  const { onSubmit, register, handleSubmit, errors, loading } =
-    useLoginSubmit();
+  const {
+    onSubmit,
+    register,
+    handleSubmit,
+    errors,
+    loading,
+    unAuthModal,
+    setUnAuthModal,
+    errMessage,
+    setErrMessage,
+  } = useLoginSubmit();
 
-    const { setShowModal } = useContext(ModalContext);
+  const { setShowModal } = useContext(ModalContext);
 
-   const handleLogin = () => {
-      setShowModal(true);
-
-    };
+  const handleLogin = () => {
+    setShowModal(true);
+  };
 
   return (
     <>
+      {unAuthModal === true && (
+        <div
+          className="flex flex-col  items-center bg-[#000000a2]
+       fixed top-0 bottom-0 left-0 right-0 justify-center"
+        >
+          <AuthModal message={errMessage} setUnAuthModal={setUnAuthModal} />
+        </div>
+      )}
       <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
         <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
           <div className="flex flex-col overflow-y-auto md:flex-row">

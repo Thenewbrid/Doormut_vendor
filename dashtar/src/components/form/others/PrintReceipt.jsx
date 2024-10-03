@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { FiPrinter } from "react-icons/fi";
 import { useReactToPrint } from "react-to-print";
 
@@ -11,12 +11,15 @@ import OrderServices from "../../../services/OrderServices";
 import SettingServices from "../../../services/SettingServices";
 import InvoiceForPrint from "../../invoice/InvoiceForPrint";
 import VendorServices from "../../../services/VendorServices";
+import { AdminContext } from "@/context/AdminContext";
 
 const PrintReceipt = ({ orderId, isVendor }) => {
   const printRefTwo = useRef();
   const [orderData, setOrderData] = useState({});
 
   const { data: globalSetting } = useAsync(SettingServices.getGlobalSetting);
+  const { state, dispatch } = useContext(AdminContext);
+  const { userInfo } = state;
 
   const pageStyle = `
     @media print {
@@ -60,7 +63,7 @@ const PrintReceipt = ({ orderId, isVendor }) => {
   const handlePrintReceipt = async (id) => {
     try {
       if (isVendor === true) {
-        const res = await VendorServices.getVendorOrders("MTMT_150", id);
+        const res = await VendorServices.getVendorOrders(userInfo.store_id, id);
         setOrderData(res);
         handlePrint();
         console.log(res);

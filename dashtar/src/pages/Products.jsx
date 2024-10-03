@@ -252,8 +252,8 @@ const Products = () => {
                 </TableCell>
                 <TableCell>{t("ProductNameTbl")}</TableCell>
                 <TableCell>{t("CategoryTbl")}</TableCell>
-                <TableCell>{t("PriceTbl")}</TableCell>
-                <TableCell>Sale Price</TableCell>
+                <TableCell>Retail Price</TableCell>
+                <TableCell>Whole Price</TableCell>
                 <TableCell>{t("StockTbl")}</TableCell>
                 <TableCell>{t("StatusTbl")}</TableCell>
                 <TableCell className="text-center">{t("DetailsTbl")}</TableCell>

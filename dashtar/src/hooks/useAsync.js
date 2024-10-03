@@ -27,6 +27,7 @@ const useAsync = (asyncFunction) => {
   } = useContext(SidebarContext);
 
   useEffect(() => {
+    setLoading(true);
     let unmounted = false;
     let source = axios.CancelToken.source();
     (async () => {
@@ -41,11 +42,14 @@ const useAsync = (asyncFunction) => {
         if (!unmounted) {
           setError(err.message);
           if (axios.isCancel(err)) {
-            setError(err.message);
+            setError(err.response.message || err.message);
+            console.log(err);
             setLoading(false);
             setData([]);
           } else {
-            setError(err.message);
+            setError(err?.response?.data?.message || err?.message);
+            console.log(err);
+
             setLoading(false);
             setData([]);
           }

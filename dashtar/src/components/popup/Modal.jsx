@@ -46,11 +46,11 @@ setSelectedTime(selectedTime);
     })
   };
    
-  
+  //wizicode: changed name modal to modal-a and toggle to toggler
   
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="modal-a">
         <h2 className="text-[19px] font-bold text-gray-500">Sat, 27 May</h2>
         <div className="flex items-center justify-start gap-5">
           <h3 className="text-[19px] font-semibold text-gray-800">
@@ -59,7 +59,7 @@ setSelectedTime(selectedTime);
           {/* TOGGLE SWITCH */}
           <button
             onClick={() => setToggle(!toggle)}
-            className={` toggle ${toggle ? "active" : ""}`}
+            className={` toggler ${toggle ? "active" : ""}`}
           >
             <div className="thumb"></div>
           </button>
